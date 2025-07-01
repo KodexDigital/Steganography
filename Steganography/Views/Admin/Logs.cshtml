@@ -1,0 +1,21 @@
+﻿@model string[]
+@{
+    ViewData["Title"] = "Action Logs";
+}
+
+<div class="container mt-4">
+    <h3>📄 Activity Logs</h3>
+    <pre style="background:#f8f9fa; padding:1rem; max-height:500px; overflow:auto;">
+@foreach (var log in Model)
+{
+        @log
+}
+    </pre>
+</div>
+@*  with user-per
+@foreach (var log in Model.OrderByDescending(x => x))
+{
+    <div class="border-bottom pb-2 mb-2">
+        <code>@log</code>
+    </div>
+} *@

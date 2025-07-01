@@ -1,0 +1,51 @@
+﻿@using Steganography.ViewModels
+@model UserStatsViewModel
+@{
+    ViewData["Title"] = "My Activity Stats";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-3">📈 @Model.Username’s Activity Summary</h3>
+
+    <div class="row gy-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Total Actions</h5>
+                    <p class="fs-4">@Model.TotalActions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6>Encodes</h6>
+                    <p class="fs-4 text-success">@Model.EncodeCount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6>Decodes</h6>
+                    <p class="fs-4 text-primary">@Model.DecodeCount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h6>Last Action</h6>
+                    <p><strong>@Model.LastAction</strong> at @Model.LastActionTime?.ToString("f")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a class="btn btn-outline-secondary" href="/Stego/Logs">🔍 View My Logs</a>
+    </div>
+</div>
