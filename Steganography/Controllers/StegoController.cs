@@ -12,7 +12,10 @@ namespace Steganography.Controllers
         private readonly IWebHostEnvironment _env = env;
         private readonly SteganographyService _stegService = new();
 
-        [HttpPost]
+        [HttpGet("steg-in")]
+        public IActionResult StegIn() => View();
+
+        [HttpPost("steg-in")]
         public async Task<IActionResult> Encode(StegoViewModel model)
         {
             if (model.ImageFile == null || string.IsNullOrWhiteSpace(model.Message))
