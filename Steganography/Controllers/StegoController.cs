@@ -7,16 +7,10 @@ using System.Drawing.Imaging;
 
 namespace Steganography.Controllers
 {
-    public class StegoController : Controller
+    public class StegoController(IWebHostEnvironment env) : Controller
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly SteganographyService _stegService;
-
-        public StegoController(IWebHostEnvironment env)
-        {
-            _env = env;
-            _stegService = new SteganographyService();
-        }
+        private readonly IWebHostEnvironment _env = env;
+        private readonly SteganographyService _stegService = new();
 
         [HttpPost]
         public async Task<IActionResult> Encode(StegoViewModel model)
