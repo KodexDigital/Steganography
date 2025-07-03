@@ -13,7 +13,12 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\icons\" />
-    <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\uploads\abc_stegs\" />
+    <Folder Include="wwwroot\uploads\xyz_stegs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anaconda\Anaconda.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿@using Steganography.ViewModels
-@model StegoViewModel
+@model StegInViewModel
 
 @{
     ViewData["Title"] = "Image Steganography";
@@ -65,14 +65,14 @@
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(Model?.ExtractedMessage))
+    @* @if (!string.IsNullOrEmpty(Model?.ExtractedMessage))
     {
         <hr />
         <div>
             <h5>📝 Extracted Message:</h5>
             <div class="alert alert-info">@Model.ExtractedMessage</div>
         </div>
-    }
+    } *@
 </div>
 
 @* <button class="btn btn-outline-primary" id="installBtn">Install App</button>

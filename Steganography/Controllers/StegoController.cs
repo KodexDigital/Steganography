@@ -2,104 +2,66 @@
 using Steganography.Helpers;
 using Steganography.Services;
 using Steganography.ViewModels;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Steganography.Controllers
 {
-    public class StegoController(IWebHostEnvironment env) : Controller
+    public class StegoController(ISteganographyService service) : Controller
     {
-        private readonly IWebHostEnvironment _env = env;
-        private readonly SteganographyService _stegService = new();
+        private readonly ISteganographyService _service = service;
 
         [HttpGet("steg-in")]
         public IActionResult StegIn() => View();
 
         [HttpPost("steg-in")]
-        public async Task<IActionResult> StegIn(StegoViewModel model)
+        public async Task<IActionResult> StegIn(StegInViewModel model)
         {
-            if (model.ImageFile == null || string.IsNullOrWhiteSpace(model.Message))
+            if (!ModelState.IsValid) return View(model);
+            var response = await _service.EncryptMessageAsync(new EncodeViewModel
             {
-                TempData["Error"] = "Please upload an image and enter a message.";
-                return RedirectToAction("Index");
+                File = model.Image,
+                SecretMessage = model.Message,
+                StegPassKey = model.StegKey
+            });
+
+            if (response.Status)
+            {
+                TempData["SuccessMessage"] = response.Message;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = response.Message;
             }
 
-            try
-            {
-                string path = Path.Combine(_env.WebRootPath, "uploads", model.ImageFile.FileName);
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await model.ImageFile.CopyToAsync(stream);
-                }
-
-                using (var bmp = new Bitmap(path))
-                {
-                    var encryptedMessage = CryptoHelper.Encrypt(model.Message, model.Password);
-                    var encodedImage = _stegService.EmbedMessage(bmp, encryptedMessage);
-
-                    if (!_stegService.CanEmbedMessage(bmp, encryptedMessage))
-                    {
-                        TempData["Error"] = $"Image too small. Choose a larger image or reduce message length.";
-                        return RedirectToAction("Index");
-                    }
-
-                    string outPath = Path.Combine(_env.WebRootPath, "uploads", "stego_" + model.ImageFile.FileName);
-                    encodedImage.Save(outPath, ImageFormat.Png);
-
-                    ViewBag.EncodedImagePath = "/uploads/stego_" + model.ImageFile.FileName;
-                    TempData["Success"] = "Message successfully embedded!";
-                    LogHelper.Log("Encode", model.Message, "Success", "kodex", null);
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Failed to encode message: " + ex.Message;
-                LogHelper.Log("Encode", model.Message, "Failed: " + ex.Message, "kodex", null);
-            }
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(StegIn));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Decode(IFormFile stegoImage, string password)
+        [HttpGet("steg-out")]
+        public IActionResult StegOut() => View();
+
+        [HttpPost("steg-out")]
+        public async Task<IActionResult> StegOut(DecodeViewModel model)
         {
-            if (stegoImage == null)
+            if (!ModelState.IsValid) return View(model);
+            var response = await _service.DecodeMessageAsync(model);
+            if (response.Status)
             {
-                TempData["Error"] = "Please upload a stego-image.";
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = response.Message;
+                model.ExtractedMessage = response.Data?.ExtractedMessage;
+                return View(model);
+            }
+            else
+            {
+                TempData["ErrorMessage"] = response.Message;
             }
 
-            try
-            {
-                string path = Path.Combine(_env.WebRootPath, "uploads", stegoImage.FileName);
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await stegoImage.CopyToAsync(stream);
-                }
-
-                using (var bmp = new Bitmap(path))
-                {
-                    var extracted = _stegService.ExtractMessage(bmp);
-                    var decrypted = CryptoHelper.Decrypt(extracted, password);
-                    var model = new StegoViewModel { ExtractedMessage = decrypted };
-                    TempData["Success"] = "Message successfully extracted!";
-                    LogHelper.Log("Decode", model.Message, "Success", "kodex", null);
-                    return View("Index", model);
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Failed to extract message: " + ex.Message;
-                LogHelper.Log("Decode", "model.Message", "Failed: " + ex.Message, "kodex", null);
-            }
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(StegOut));
         }
-
         public IActionResult Index() => View();
+
+        [HttpGet("stats")]
         public IActionResult Stats()
         {
-            var username = User.Identity?.Name ?? "Kodex";
+            var username = User.Identity?.Name ?? "kodex";
             var logs = LogHelper.GetLogs()
                 .Where(l => l.Contains($"User: {username}"))
                 .ToList();
@@ -124,6 +86,17 @@ namespace Steganography.Controllers
 
             return View(model);
         }
-    }
+        
+        [HttpGet("logs")]
+        public IActionResult Logs()
+        {
+            var username = User.Identity?.Name ?? "kodex";
+            var logs = LogHelper.GetLogs()
+                                .Where(log => log.Contains($"User: {username}"))
+                                .OrderByDescending(l => l)
+                                .ToArray();
 
+            return View(logs);
+        }
+    }
 }

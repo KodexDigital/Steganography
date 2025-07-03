@@ -35,9 +35,15 @@
                 </a>
             </li>
             <li class="nav-item bg-info">
-                <a class="nav-link" asp-action="Decrypt" asp-controller="Stego">
+                <a class="nav-link" asp-action="StegOut" asp-controller="Stego">
                     @* <i class="fas fa-fw fa-tachometer-alt"></i> *@
                     <span>STEGOUT</span>
+                </a>
+            </li>
+            <li class="nav-item bg-primary">
+                <a class="nav-link" asp-action="Stats" asp-controller="Stego">
+                    @* <i class="fas fa-fw fa-tachometer-alt"></i> *@
+                    <span>STATS</span>
                 </a>
             </li>
         </ul>
@@ -47,11 +53,12 @@
             <!-- Main Content -->
             <div id="content">                
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-gradient-light topbar mb-4 static-top shadow">
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
+                    
                 </nav>
                 <!-- End of Topbar -->
                 <!-- Begin Page Content -->

@@ -2,6 +2,7 @@
 @model UserStatsViewModel
 @{
     ViewData["Title"] = "My Activity Stats";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
@@ -46,6 +47,6 @@
     </div>
 
     <div class="mt-4">
-        <a class="btn btn-outline-secondary" href="/Stego/Logs">🔍 View My Logs</a>
+        <a class="btn btn-outline-secondary" asp-action="Logs">🔍 View My Logs</a>
     </div>
 </div>

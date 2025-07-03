@@ -1,27 +1,20 @@
-﻿
+﻿@using Steganography.ViewModels
+@model StegInViewModel
+
 @{
     ViewData["Title"] = "StegIn";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 
 <style>
     h5 {
-        margin: 50px 0;
+        margin: 20px 0;
     }
     .file-drop-area {
-        position: relative;
         display: flex;
         align-items: center;
-        width: 100%;
-        height:200px;
-        max-width: 100%;
-        padding: 25px;
-        border: 2px dashed;
-        border-color:red;
-        /* background-color:peru */
-        border-radius: 3px;
         transition: 0.2s;
     }
 
@@ -62,18 +55,42 @@
     
 <h1>Steg In</h1>
 
-<div class="mt-50">
+<div class="mt-30">
     <div style="text-align:center"><h5>UPLOAD IMAGE FILE TO SECURE YOUR MESSAGE</h5></div>
+    <hr />
     <div class="row">
         <div class="col-md-7">
             <form asp-action="StegIn" asp-controller="Stego" method="post" enctype="multipart/form-data">
-                <div class="file-drop-area">
-                    <span class="choose-file-button">Choose a file</span>
-                    <span class="file-message">or drag and drop your file here</span>
-                    <input class="file-input" type="file" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                <div class="form-group pb-2">
+                    <label>Message</label>
+                    <textarea asp-for="Message" class="form-control" rows="7" placeholder="Enter your secret message here"></textarea>
+                    <span asp-validation-for="Message" class="text-danger small"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label>Upload File</label>
+                            <div class="file-drop-area">
+                                <span class="choose-file-button">Choose a file</span>
+                                <span class="file-message">or drag and drop file here</span>
+                                <input asp-for="Image" class="file-input form-control" type="file" name="Image" id="Image" accept="image/png, image/jpeg" onchange="previewImage(event)">
+                            </div>
+                            <div class="pl-3">
+                                <small class="text-info" style="font-style:italic">Type: PNG &amp; JPG | Size: <= 5MB</small><br />
+                                <span asp-validation-for="Image" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>STGK [StegKey]</label>
+                            <input asp-for="StegKey" class="form-control" type="password" placeholder="Enter coded steg key" />
+                            <span asp-validation-for="StegKey" class="text-danger small"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="pt-4">
-                    <button type="submit" class="btn btn-outline-primary rounded-pill col-md-6">StegIn</button>
+                    <button type="submit" class="btn btn-outline-warning rounded-pill col-md-6">Steg-In</button>
                 </div>
             </form>
         </div>
@@ -88,11 +105,29 @@
     </div>
 </div>
 
-
+<!-- Add this in your <head> or before closing </body> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+@* <script>
+    function showAlert() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure?',
+            text: 'This action cannot be undone.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
+            }
+        });
+    }
+</script> *@
 <script>
-      $(document).on('change', '.file-input', function() {
+    $(document).on('change', '.file-input', function() {
       var filesCount = $(this)[0].files.length;
       var textbox = $(this).prev();
       if (filesCount === 1) {
@@ -102,9 +137,7 @@
         textbox.text(filesCount + ' files selected');
       }
     });
-</script>
 
-<script>
     function previewImage(event) {
         var reader = new FileReader();
         reader.onload = function () {
@@ -113,5 +146,27 @@
             output.style.display = 'block';
         };
         reader.readAsDataURL(event.target.files[0]);
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                        // title: 'Success',
+                        text: '@TempData["SuccessMessage"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+                <text>
+                    Swal.fire({
+                        icon: 'error',
+                            text: '@TempData["ErrorMessage"]',
+                        confirmButtonText: 'Dismiss'
+                    });
+                </text>
     }
 </script>

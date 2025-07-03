@@ -7,8 +7,7 @@ namespace Steganography.Helpers
     {
         public static string Encrypt(string text, string password)
         {
-            byte[] key, iv;
-            DeriveKeyAndIV(password, out key, out iv);
+            DeriveKeyAndIV(password, out byte[] key, out byte[] iv);
 
             using var aes = Aes.Create();
             aes.Key = key;
@@ -23,8 +22,7 @@ namespace Steganography.Helpers
 
         public static string Decrypt(string encryptedBase64, string password)
         {
-            byte[] key, iv;
-            DeriveKeyAndIV(password, out key, out iv);
+            DeriveKeyAndIV(password, out byte[] key, out byte[] iv);
 
             using var aes = Aes.Create();
             aes.Key = key;
@@ -45,5 +43,4 @@ namespace Steganography.Helpers
             iv = new byte[16]; // 128-bit IV (just zeros for simplicity here)
         }
     }
-
 }

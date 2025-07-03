@@ -1,0 +1,151 @@
+﻿@using Steganography.ViewModels
+@model DecodeViewModel
+
+@{
+    ViewData["Title"] = "StegOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+<style>
+    h5 {
+        margin: 20px 0;
+    }
+
+    .file-drop-area {
+        display: flex;
+        align-items: center;
+        transition: 0.2s;
+    }
+
+    .choose-file-button {
+        flex-shrink: 0;
+        background-color: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        padding: 8px 15px;
+        margin-right: 10px;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .file-message {
+        font-size: small;
+        font-weight: 300;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .file-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+        opacity: 0;
+    }
+
+    .mt-100 {
+        margin-top: 100px;
+    }
+</style>
+
+<h1>Steg Out</h1>
+
+<div class="mt-30">
+    <div style="text-align:center"><h5>UPLOAD STEGO FILE TO EXTRACT THE MESSAGE</h5></div>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="StegOut" asp-controller="Stego" method="post" enctype="multipart/form-data">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Upload File</label>
+                            <div class="file-drop-area">
+                                <span class="choose-file-button">Choose a file</span>
+                                <span class="file-message">or drag and drop file here</span>
+                                <input asp-for="StegFile" class="file-input form-control" type="file" name="StegFile" id="StegFile" accept="image/png, image/jpeg">
+                            </div>
+                            <div class="pl-3">
+                                <span asp-validation-for="StegFile" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group pt-3">
+                    <label>STGK [StegKey]</label>
+                    <input asp-for="StegPassKey" class="form-control" type="password" placeholder="Enter coded steg key" />
+                    <span asp-validation-for="StegPassKey" class="text-danger small"></span>
+                </div>
+
+                <hr />
+
+                <div class="pt-1">
+                    <button type="submit" class="btn btn-outline-info rounded-pill btn-block">Steg-Out</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <h4 class="card-header">Extracted Message</h4>
+                <div class="card-body">
+                    <textarea asp-for="ExtractedMessage" class="form-control" disabled rows="20" placeholder="Extracted sacred message will appear here" style="font-family:Candara"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+    $(document).on('change', '.file-input', function() {
+      var filesCount = $(this)[0].files.length;
+      var textbox = $(this).prev();
+      if (filesCount === 1) {
+        var fileName = $(this).val().split('\\').pop();
+        textbox.text(fileName);
+      } else {
+        textbox.text(filesCount + ' files selected');
+      }
+    });
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+                    <text>
+                        Swal.fire({
+                            icon: 'success',
+                            // title: 'Success',
+                            text: '@TempData["SuccessMessage"]',
+                            confirmButtonText: 'OK'
+                        });
+                    </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+                    <text>
+                        Swal.fire({
+                            icon: 'error',
+                                text: '@TempData["ErrorMessage"]',
+                            confirmButtonText: 'Dismiss'
+                        });
+                    </text>
+    }
+</script>

@@ -1,88 +1,98 @@
-﻿using System.Drawing;
-using System.Text;
+﻿using Anaconda.UserViewResponse;
+using Anaconda.UserViewResponse.ViewResponses;
+using Steganography.Helpers;
+using Steganography.ViewModels;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Steganography.Services
 {
-    public class SteganographyService
+    public class SteganographyService(IWebHostEnvironment env) : ISteganographyService
     {
-        private const char Delimiter = '|'; // Used to indicate end of message
-
-        public Bitmap EmbedMessage(Bitmap image, string message)
+        protected readonly IWebHostEnvironment _env = env;
+        protected readonly SteganographyHelper _steganographyHelper = new();
+        public async Task<ResponseHandler<EncryptMessageResponse>> EncryptMessageAsync(EncodeViewModel model)
         {
-            message += Delimiter; // Add delimiter to indicate end of message
-            var binaryMessage = GetBinaryString(message);
-            int messageIndex = 0;
-
-            for (int y = 0; y < image.Height; y++)
+            var response = new ResponseHandler<EncryptMessageResponse>();
+            try
             {
-                for (int x = 0; x < image.Width; x++)
+                if (model.File is null || model.File.Length.Equals(0)) throw new Exception("Please upload an image.");
+                if (string.IsNullOrWhiteSpace(model.SecretMessage)) throw new Exception("Please supply the sacred message.");
+                if (string.IsNullOrWhiteSpace(model.StegPassKey)) throw new Exception("Steg Key is required.");
+
+                if (model.File.Length > 5 * 1024 * 1024) // 5 MB limit
+                    throw new Exception("File size exceeds the maximum limit of 5 MB.");
+
+                if (model.File.Length < 100) // Minimum size check
+                    throw new Exception("File is too small to embed a message. Please choose a larger image.");
+
+                if (model.File.ContentType is not "image/png" && model.File.ContentType is not "image/jpeg")
+                    throw new Exception("Only PNG and JPEG images are supported.");
+
+                string path = Path.Combine(_env.WebRootPath, "uploads/abc_stegs/", model.File.FileName.Replace(' ', '_'));
+                using (var stream = new FileStream(path, FileMode.Create))
                 {
-                    if (messageIndex >= binaryMessage.Length)
-                        return image;
-
-                    Color pixel = image.GetPixel(x, y);
-                    byte r = pixel.R, g = pixel.G, b = pixel.B;
-
-                    // Replace LSB of Blue channel
-                    b = (byte)((b & 0xFE) | (binaryMessage[messageIndex] == '1' ? 1 : 0));
-                    messageIndex++;
-
-                    image.SetPixel(x, y, Color.FromArgb(r, g, b));
-
-                    if (messageIndex >= binaryMessage.Length)
-                        return image;
+                    await model.File.CopyToAsync(stream);
                 }
+
+                using var bmp = new Bitmap(path);
+                var encryptedMessage = CryptoHelper.Encrypt(model.SecretMessage, model.StegPassKey);
+                var encodedImage = _steganographyHelper.EmbedMessage(bmp, encryptedMessage);
+
+                if (!_steganographyHelper.CanEmbedMessage(bmp, encryptedMessage))
+                    throw new Exception("Image is too small to embed the message. Please choose a larger image or reduce message length.");
+
+                string fileName = string.Concat(Path.GetFileNameWithoutExtension(model.File.FileName).Replace(' ', '_'), "_", Guid.NewGuid().ToString("N"));
+                string fileExtension = Path.GetExtension(model.File.FileName);
+                string name = string.Concat("_stg=>", fileName, fileExtension).ToLower();
+
+                string outPath = Path.Combine(_env.WebRootPath, "uploads/xyz_stegs/", name);
+                encodedImage.Save(outPath, ImageFormat.Png);
+
+                response.Data = new EncryptMessageResponse(string.Concat("/uploads/xyz_stegs/", name));
+                response.Message = "Message successfully embedded!";
+                LogHelper.Log("Encode", response.Message, "Success", "kodex", null);
+            }
+            catch (Exception ex)
+            {
+                response.Message = "Failed to encode message";
+                response.Status = false;
+                LogHelper.Log("Encode", ex.Message, "Faild", "kodex", null);
             }
 
-            throw new Exception("Message too long to embed in image");
+            return response;
         }
 
-        public string ExtractMessage(Bitmap image)
+        public async Task<ResponseHandler<StegOutViewModel>> DecodeMessageAsync(DecodeViewModel model)
         {
-            var binaryBuilder = new StringBuilder();
-            var messageBuilder = new StringBuilder();
-
-            for (int y = 0; y < image.Height; y++)
+            var response = new ResponseHandler<StegOutViewModel>();
+            try
             {
-                for (int x = 0; x < image.Width; x++)
+                if (model.StegFile is null || model.StegFile.Length.Equals(0)) throw new Exception("Please upload the steged image.");
+                if (string.IsNullOrWhiteSpace(model.StegPassKey)) throw new Exception("Enter the Steg Key.");
+
+                string path = Path.Combine(_env.WebRootPath, "uploads/xyz_stegs/", model.StegFile.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
                 {
-                    Color pixel = image.GetPixel(x, y);
-                    int lsb = pixel.B & 1; // Get LSB of Blue
-                    binaryBuilder.Append(lsb);
-
-                    if (binaryBuilder.Length == 8)
-                    {
-                        char c = (char)Convert.ToByte(binaryBuilder.ToString(), 2);
-                        if (c == Delimiter)
-                            return messageBuilder.ToString();
-
-                        messageBuilder.Append(c);
-                        binaryBuilder.Clear();
-                    }
+                    await model.StegFile.CopyToAsync(stream);
                 }
+
+                using var bmp = new Bitmap(path);
+                var extracted = _steganographyHelper.ExtractMessage(bmp);
+                var decrypted = CryptoHelper.Decrypt(extracted, model.StegPassKey);
+
+                response.Data = new StegOutViewModel(decrypted );
+                response.Message = "Message successfully extracted!";
+                LogHelper.Log("Decode", response.Message, "Success", "kodex", null);
             }
-
-            return messageBuilder.ToString(); // Fallback
-        }
-
-        private string GetBinaryString(string message)
-        {
-            var sb = new StringBuilder();
-            foreach (char c in message)
+            catch (Exception ex)
             {
-                sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
+                response.Message = "Failed to extract message";
+                response.Status = false;
+                LogHelper.Log("Decode", ex.Message, "Faild", "kodex", null);
             }
-            return sb.ToString();
-        }
 
-        //Check Message Capacity Before Embedding
-        public bool CanEmbedMessage(Bitmap image, string message)
-        {
-            string binary = GetBinaryString(message + Delimiter);
-            int maxBits = image.Width * image.Height; // 1 bit per pixel (Blue channel)
-            return binary.Length <= maxBits;
+            return response;
         }
-
     }
-
 }
