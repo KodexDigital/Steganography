@@ -16,7 +16,7 @@ namespace Steganography.Controllers
         public IActionResult StegIn() => View();
 
         [HttpPost("steg-in")]
-        public async Task<IActionResult> Encode(StegoViewModel model)
+        public async Task<IActionResult> StegIn(StegoViewModel model)
         {
             if (model.ImageFile == null || string.IsNullOrWhiteSpace(model.Message))
             {

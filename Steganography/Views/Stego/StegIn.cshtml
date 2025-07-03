@@ -66,21 +66,28 @@
     <div style="text-align:center"><h5>UPLOAD IMAGE FILE TO SECURE YOUR MESSAGE</h5></div>
     <div class="row">
         <div class="col-md-7">
-            <div class="file-drop-area">
-                <span class="choose-file-button">Choose a file</span>
-                <span class="file-message">or drag and drop your file here</span>
-                <input class="file-input" type="file">
-            </div>
+            <form asp-action="StegIn" asp-controller="Stego" method="post" enctype="multipart/form-data">
+                <div class="file-drop-area">
+                    <span class="choose-file-button">Choose a file</span>
+                    <span class="file-message">or drag and drop your file here</span>
+                    <input class="file-input" type="file" name="ImageFile" id="ImageFile" accept="image/*" onchange="previewImage(event)">
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="btn btn-outline-primary rounded-pill col-md-6">StegIn</button>
+                </div>
+            </form>
         </div>
         <div class="col-md-5">
            <div class="card">
+                <div class="card-header">Image File Previewer</div>
                 <div class="card-body img-thumbnail">
-                   <img src="#" height="200" width="370" />
-               </div>
+                    <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
+                </div>
            </div>
         </div>
     </div>
 </div>
+
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -95,4 +102,16 @@
         textbox.text(filesCount + ' files selected');
       }
     });
+</script>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('imagePreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 </script>
