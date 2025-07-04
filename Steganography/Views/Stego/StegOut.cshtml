@@ -54,48 +54,70 @@
     }
 </style>
 
-<h1>Steg Out</h1>
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Steg Out</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-unlock-alt fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="mt-30">
-    <div style="text-align:center"><h5>UPLOAD STEGO FILE TO EXTRACT THE MESSAGE</h5></div>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="StegOut" asp-controller="Stego" method="post" enctype="multipart/form-data">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>Upload File</label>
-                            <div class="file-drop-area">
-                                <span class="choose-file-button">Choose a file</span>
-                                <span class="file-message">or drag and drop file here</span>
-                                <input asp-for="StegFile" class="file-input form-control" type="file" name="StegFile" id="StegFile" accept="image/png, image/jpeg">
-                            </div>
-                            <div class="pl-3">
-                                <span asp-validation-for="StegFile" class="text-danger small"></span>
+<div class="row">
+   <div class="col-xl-5 col-lg-6">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Upload STEGO File To Extract The Message</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <form asp-action="StegOut" asp-controller="Stego" method="post" enctype="multipart/form-data">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Upload File</label>
+                                <div class="file-drop-area">
+                                    <span class="choose-file-button">Choose a file</span>
+                                    <span class="file-message">or drag and drop file here</span>
+                                    <input asp-for="StegFile" class="file-input form-control" type="file" name="StegFile" id="StegFile" accept="image/png, image/jpeg">
+                                </div>
+                                <div class="pl-3">
+                                    <span asp-validation-for="StegFile" class="text-danger small"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group pt-3">
-                    <label>STGK [StegKey]</label>
-                    <input asp-for="StegPassKey" class="form-control" type="password" placeholder="Enter coded steg key" />
-                    <span asp-validation-for="StegPassKey" class="text-danger small"></span>
-                </div>
+                    <div class="form-group pt-3">
+                        <label>STGK [StegKey]</label>
+                        <input asp-for="StegPassKey" class="form-control" type="password" placeholder="Enter coded steg key" />
+                        <span asp-validation-for="StegPassKey" class="text-danger small"></span>
+                    </div>
 
-                <hr />
+                    <hr />
 
-                <div class="pt-1">
-                    <button type="submit" class="btn btn-outline-info rounded-pill btn-block">Steg-Out</button>
-                </div>
-            </form>
+                    <div class="pt-1">
+                        <button type="submit" class="btn btn-outline-info rounded-pill btn-block"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Steg-Out</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="col-md-8">
-            <div class="card">
-                <h4 class="card-header">Extracted Message</h4>
-                <div class="card-body">
-                    <textarea asp-for="ExtractedMessage" class="form-control" disabled rows="20" placeholder="Extracted sacred message will appear here" style="font-family:Candara"></textarea>
-                </div>
+    </div>   
+    <div class="col-xl-7 col-lg-6">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Extracted Message</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <textarea asp-for="ExtractedMessage" class="form-control" disabled rows="20" placeholder="Extracted sacred message will appear here" style="font-family:Candara"></textarea>
             </div>
         </div>
     </div>

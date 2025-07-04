@@ -53,54 +53,76 @@
     }
 </style>
     
-<h1>Steg In</h1>
-
-<div class="mt-30">
-    <div style="text-align:center"><h5>UPLOAD IMAGE FILE TO SECURE YOUR MESSAGE</h5></div>
-    <hr />
-    <div class="row">
-        <div class="col-md-7">
-            <form asp-action="StegIn" asp-controller="Stego" method="post" enctype="multipart/form-data">
-                <div class="form-group pb-2">
-                    <label>Message</label>
-                    <textarea asp-for="Message" class="form-control" rows="7" placeholder="Enter your secret message here"></textarea>
-                    <span asp-validation-for="Message" class="text-danger small"></span>
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Steg In</div>
                 </div>
-                <div class="row">
-                    <div class="col-md-7">
-                        <div class="form-group">
-                            <label>Upload File</label>
-                            <div class="file-drop-area">
-                                <span class="choose-file-button">Choose a file</span>
-                                <span class="file-message">or drag and drop file here</span>
-                                <input asp-for="Image" class="file-input form-control" type="file" name="Image" id="Image" accept="image/png, image/jpeg" onchange="previewImage(event)">
-                            </div>
-                            <div class="pl-3">
-                                <small class="text-info" style="font-style:italic">Type: PNG &amp; JPG | Size: <= 5MB</small><br />
-                                <span asp-validation-for="Image" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label>STGK [StegKey]</label>
-                            <input asp-for="StegKey" class="form-control" type="password" placeholder="Enter coded steg key" />
-                            <span asp-validation-for="StegKey" class="text-danger small"></span>
-                        </div>
-                    </div>
+                <div class="col-auto">
+                    <i class="fas fa-shield fa-2x text-gray-300"></i>
                 </div>
-                <div class="pt-4">
-                    <button type="submit" class="btn btn-outline-warning rounded-pill col-md-6">Steg-In</button>
-                </div>
-            </form>
+            </div>
         </div>
-        <div class="col-md-5">
-           <div class="card">
-                <div class="card-header">Image File Previewer</div>
-                <div class="card-body img-thumbnail">
-                    <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
-                </div>
-           </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-7 col-lg-6">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Upload Image File To Secure Your Message</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <form asp-action="StegIn" asp-controller="Stego" method="post" enctype="multipart/form-data">
+                    <div class="form-group pb-2">
+                        <label>Message</label>
+                        <textarea asp-for="Message" class="form-control" rows="7" placeholder="Enter your secret message here"></textarea>
+                        <span asp-validation-for="Message" class="text-danger small"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label>Upload File</label>
+                                <div class="file-drop-area">
+                                    <span class="choose-file-button">Choose a file</span>
+                                    <span class="file-message">or drag and drop file here</span>
+                                    <input asp-for="Image" class="file-input form-control" type="file" name="Image" id="Image" accept="image/png, image/jpeg" onchange="previewImage(event)">
+                                </div>
+                                <div class="pl-3">
+                                    <small class="text-info" style="font-style:italic">Type: PNG &amp; JPG | Size: <= 5MB</small><br />
+                                    <span asp-validation-for="Image" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>STGK [StegKey]</label>
+                                <input asp-for="StegKey" class="form-control" type="password" placeholder="Enter coded steg key" />
+                                <span asp-validation-for="StegKey" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="btn btn-outline-warning rounded-pill col-md-6"><i class="fa fa-shield"></i> Steg-In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-5 col-lg-6">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Image File Previewer</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body img-thumbnail">
+                <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
+            </div>
         </div>
     </div>
 </div>
