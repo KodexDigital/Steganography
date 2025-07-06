@@ -2,7 +2,90 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    bool isAuthenticated = false;
 }
+
 
 <h1>Index here</h1>
 
+
+
+
+
+
+
+
+
+
+
+<!-- Registration Modal-->
+<div class="modal fade" id="regModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">How Should I Recognize You?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="email" class="form-control" placeholder="Enter your steg email">
+            </div>
+            <div class="modal-footer">
+                <a href="login.html" class="btn btn-primary btn-user btn-block">
+                    Register
+                </a>
+                <a class="small" href="#" data-toggle="modal" data-target="#loginModal" id="btn-login">Already have an account? Login!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Login Modal-->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready To Steg?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="email" class="form-control" placeholder="Enter your steg email">
+            </div>
+            <div class="modal-footer">
+                <a href="login.html" class="btn btn-primary btn-user btn-block">
+                    Get Access
+                </a>  
+                <a class="small" href="#" data-toggle="modal" data-target="#regModal" id="btn-reg">Don't' have an account? Register!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+@if (!isAuthenticated)
+{
+    <script>
+        window.onload = function(){
+            $('#regModal').modal('show');
+        };
+    </script>
+}
+
+<script>
+     $('#btn-reg').click(function()
+     {
+          $('#loginModal').modal('hide');
+     })
+     $('#btn-login').click(function()
+     {
+          $('#regModal').modal('hide');
+         $('#loginModal').modal('show');
+     })
+</script>

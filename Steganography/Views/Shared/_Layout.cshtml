@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    bool isAuthenticated = false;
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,38 +21,55 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet"/>
+
+    <style>
+        .nav_link:hover{
+            background-color:blueviolet
+        }
+    </style>
 </head>
 <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-action="Index" asp-controller="Home">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">KPS STEG</div>
             </a>
-            <li class="nav-item bg-warning">
-                <a class="nav-link" asp-action="StegIn" asp-controller="Stego">
-                    <i class="fa fa-shield" aria-hidden="true"></i>
-                    <span>STEGIN</span>
-                </a>
-            </li>
-            <li class="nav-item bg-info">
-                <a class="nav-link" asp-action="StegOut" asp-controller="Stego">
-                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
-                    <span>STEGOUT</span>
-                </a>
-            </li>
-            <li class="nav-item bg-primary">
-                <a class="nav-link" asp-action="Stats" asp-controller="Stego">
-                    <i class="fa fa-line-chart" aria-hidden="true"></i>
-                    <span>STATS</span>
-                </a>
-            </li>
+            @if (isAuthenticated)
+            {
+                <li class="nav-item bg-warning">
+                    <a class="nav-link nav_link" asp-action="StegIn" asp-controller="Stego">
+                        <i class="fa fa-shield" aria-hidden="true"></i>
+                        STEGIN
+                    </a>
+                </li>
+                <li class="nav-item bg-info">
+                    <a class="nav-link nav_link" asp-action="StegOut" asp-controller="Stego">
+                        <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                        <span>STEGOUT</span>
+                    </a>
+                </li>
+                <li class="nav-item bg-primary">
+                    <a class="nav-link nav_link" asp-action="Stats" asp-controller="Stego">
+                        <i class="fa fa-line-chart" aria-hidden="true"></i>
+                        <span>STATS</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item bg-primary">
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#loginModal">
+                        <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Login
+                    </a>
+                </li>
+            }
         </ul>
         <!-- End of Sidebar -->
         <!-- Content Wrapper -->
@@ -110,6 +132,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="~/font-awesome/js/all.js"></script>
     <script src="~/font-awesome/js/all.min.js"></script>
