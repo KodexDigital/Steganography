@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Steganography.Helpers
+namespace Anaconda.Helpers
 {
     public static class CryptoHelper
     {

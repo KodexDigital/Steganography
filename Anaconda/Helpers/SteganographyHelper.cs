@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
 using System.Text;
 
-namespace Steganography.Helpers
+namespace Anaconda.Helpers
 {
     public class SteganographyHelper
     {
         private const char Delimiter = '|'; // Used to indicate end of message
 
-        public Bitmap EmbedMessage(Bitmap image, string message)
+        public static Bitmap EmbedMessage(Bitmap image, string message)
         {
             message += Delimiter; // Add delimiter to indicate end of message
             var binaryMessage = GetBinaryString(message);
@@ -24,7 +24,7 @@ namespace Steganography.Helpers
                     byte r = pixel.R, g = pixel.G, b = pixel.B;
 
                     // Replace LSB of Blue channel
-                    b = (byte)((b & 0xFE) | (binaryMessage[messageIndex] == '1' ? 1 : 0));
+                    b = (byte)(b & 0xFE | (binaryMessage[messageIndex] == '1' ? 1 : 0));
                     messageIndex++;
 
                     image.SetPixel(x, y, Color.FromArgb(r, g, b));
@@ -37,7 +37,7 @@ namespace Steganography.Helpers
             throw new Exception("Message too long to embed in image");
         }
 
-        public string ExtractMessage(Bitmap image)
+        public static string ExtractMessage(Bitmap image)
         {
             var binaryBuilder = new StringBuilder();
             var messageBuilder = new StringBuilder();
@@ -76,7 +76,7 @@ namespace Steganography.Helpers
         }
 
         //Check Message Capacity Before Embedding
-        public bool CanEmbedMessage(Bitmap image, string message)
+        public static bool CanEmbedMessage(Bitmap image, string message)
         {
             string binary = GetBinaryString(message + Delimiter);
             int maxBits = image.Width * image.Height; // 1 bit per pixel (Blue channel)

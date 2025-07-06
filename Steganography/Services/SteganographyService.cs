@@ -1,6 +1,6 @@
-﻿using Anaconda.UserViewResponse;
+﻿using Anaconda.Helpers;
+using Anaconda.UserViewResponse;
 using Anaconda.UserViewResponse.ViewResponses;
-using Steganography.Helpers;
 using Steganography.ViewModels;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -37,9 +37,9 @@ namespace Steganography.Services
 
                 using var bmp = new Bitmap(path);
                 var encryptedMessage = CryptoHelper.Encrypt(model.SecretMessage, model.StegPassKey);
-                var encodedImage = _steganographyHelper.EmbedMessage(bmp, encryptedMessage);
+                var encodedImage = SteganographyHelper.EmbedMessage(bmp, encryptedMessage);
 
-                if (!_steganographyHelper.CanEmbedMessage(bmp, encryptedMessage))
+                if (!SteganographyHelper.CanEmbedMessage(bmp, encryptedMessage))
                     throw new Exception("Image is too small to embed the message. Please choose a larger image or reduce message length.");
 
                 string fileName = string.Concat(Path.GetFileNameWithoutExtension(model.File.FileName).Replace(' ', '_'), "_", Guid.NewGuid().ToString("N"));
@@ -78,7 +78,7 @@ namespace Steganography.Services
                 }
 
                 using var bmp = new Bitmap(path);
-                var extracted = _steganographyHelper.ExtractMessage(bmp);
+                var extracted = SteganographyHelper.ExtractMessage(bmp);
                 var decrypted = CryptoHelper.Decrypt(extracted, model.StegPassKey);
 
                 response.Data = new StegOutViewModel(decrypted );

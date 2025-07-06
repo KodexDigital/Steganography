@@ -1,9 +1,15 @@
+using Anaconda.DataLayer;
+using Microsoft.EntityFrameworkCore;
 using Steganography.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ServiceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ISteganographyService, SteganographyService>();
 
 var app = builder.Build();

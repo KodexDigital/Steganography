@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Steganography.Models;
+using Steganography.ViewModels;
 
 namespace Steganography.Controllers
 {

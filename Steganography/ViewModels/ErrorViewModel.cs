@@ -1,4 +1,4 @@
-namespace Steganography.Models
+namespace Steganography.ViewModels
 {
     public class ErrorViewModel
     {
