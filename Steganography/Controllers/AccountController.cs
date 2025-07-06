@@ -2,7 +2,7 @@
 
 namespace Steganography.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : UserBaseController
     {
         public IActionResult Index()
         {

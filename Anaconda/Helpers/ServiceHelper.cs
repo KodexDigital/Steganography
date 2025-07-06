@@ -10,9 +10,14 @@ namespace Anaconda.Helpers
         public static string GetIpAddress(HttpContext context)
         {
             var ipAddress = context.Connection.RemoteIpAddress?.ToString();
-            // Check for reverse proxy headers (e.g., Cloudflare, nginx)
+            if (ipAddress == "::1") ipAddress = "127.0.0.1";
+            // If behind a reverse proxy, check headers : Check for reverse proxy headers (e.g., Cloudflare, nginx)
             if (context.Request.Headers.TryGetValue("X-Forwarded-For", out Microsoft.Extensions.Primitives.StringValues value))
-                ipAddress = value;
+            {
+                var headerIp = value.FirstOrDefault();
+                if (!string.IsNullOrEmpty(headerIp))
+                    ipAddress = headerIp;
+            }
 
             return ipAddress!;
         }
@@ -25,7 +30,7 @@ namespace Anaconda.Helpers
             return (
                 client.UA.ToString(),        // Browser
                 client.OS.ToString(),        // Operating System
-                client.Device.ToString()     // Device
+                client.Device.ToString().ToLower().Contains("other") ? "Desktop" : client.Device.ToString() // Device
             );
         }
         public static async Task<UserGeolocationResponse> GetUserLocationAsync(string ip)

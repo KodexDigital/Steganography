@@ -1,6 +1,7 @@
 ﻿using Anaconda.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Steganography.Controllers
 {
@@ -25,5 +26,10 @@ namespace Steganography.Controllers
             return View("Logs", allLogs);
         }
 
+        public IActionResult VisitorLogs()
+        {
+            //var logs = _context.VisitorLogs.OrderByDescending(l => l.VisitTime).ToList();
+            return View();
+        }
     }
 }

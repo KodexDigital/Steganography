@@ -1,5 +1,7 @@
 using Anaconda.DataLayer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Steganography.FilterAttributes;
 using Steganography.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,9 @@ builder.Services.AddDbContext<ServiceDbContext>(options => options.UseSqlServer(
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ISteganographyService, SteganographyService>();
+builder.Services.AddTransient<IActivityLoggerService, ActivityLoggerService>();
+
+builder.Services.TryAddScoped(typeof(UserActivityCaptureFilter));
 
 var app = builder.Build();
 
