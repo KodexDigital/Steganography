@@ -9,23 +9,16 @@ namespace Steganography.Controllers
     {
         protected readonly IActivityLoggerService _activityLoggerService = activityLoggerService;
         public IActionResult Index() => View();
-        public IActionResult Logs()
-        {
-            //log by user
-           var username = User.Identity?.Name ?? "Kodex";
-            var logs = LogHelper.GetLogs()
-                                .Where(log => log.Contains($"User: {username}"))
-                                .ToArray();
-
-            //var logs = LogHelper.GetLogs();
-            return View(logs);
-        }
 
         //[Authorize(Roles = "Admin")]
+        [HttpGet("logs")]
         public IActionResult AllLogs()
         {
-            var allLogs = LogHelper.GetLogs();
-            return View("Logs", allLogs);
+            var allLogs = LogHelper.GetLogs()
+                                .OrderByDescending(l => l)
+                                .ToArray();
+
+            return View(allLogs);
         }
 
         [HttpGet("visits")]

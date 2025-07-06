@@ -31,10 +31,10 @@
     </div> *@
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="visitorTable" width="100%" cellspacing="0" style="font-size:13px">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="font-size:13px">
                 <thead>
                     <tr>
-                        <th>SN</th>
+                        <th>Sn</th>
                         <th>IP</th>
                         <th>Browser</th>
                         <th>OS</th>
@@ -43,7 +43,6 @@
                         <th>Country</th>
                         <th>ISP</th>
                         <th>Time</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,9 +61,6 @@
                             <td>@log.Location!.Country</td>
                             <td>@log.Location!.Isp</td>
                             <td>@log.CreatedAt.ToLocalTime()</td>
-                            <td>
-                                <a asp-action="VisitorLogDetails" asp-controller="Admin" asp-route-id="@log.Id"><i class="fa fa-eye"></i></a>
-                            </td>
                         </tr>
                         sn++;
                     }
@@ -76,7 +72,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#visitorTable').DataTable({
+        $('#dataTable').DataTable({
             paging: true,
             searching: true,
             ordering: true,

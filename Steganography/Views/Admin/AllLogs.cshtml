@@ -1,0 +1,72 @@
+﻿@model string[]
+
+@{
+    ViewData["Title"] = "All Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+
+
+<div class="col-xl-4 col-md-7 mb-4" style="margin-left:-15px">
+    <div class="card border-left-info border-bottom-info shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">All Activity Logs</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-history fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <p class="text-muted">You have no recorded actions yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="font-size:14px">
+                    <thead>
+                        <tr>
+                            <th>Sn</th>
+                            <th>Logs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sn = 1;
+                        }
+                        @foreach (var log in Model)
+                        {
+                            <tr>
+                                <td>@sn</td>
+                                <td>@log</td>
+                            </tr>
+                            sn++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            responsive: true
+        });
+    });
+</script>

@@ -5,48 +5,77 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h3 class="mb-3">📈 @Model.Username’s Activity Summary</h3>
-
-    <div class="row gy-3">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5>Total Actions</h5>
-                    <p class="fs-4">@Model.TotalActions</p>
+<div class="col-xl-5 col-md-8 mb-4" style="margin-left:-15px">
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Username’s Activity Summary</div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6>Encodes</h6>
-                    <p class="fs-4 text-success">@Model.EncodeCount</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6>Decodes</h6>
-                    <p class="fs-4 text-primary">@Model.DecodeCount</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card border-info">
-                <div class="card-body">
-                    <h6>Last Action</h6>
-                    <p><strong>@Model.LastAction</strong> at @Model.LastActionTime?.ToString("f")</p>
+                <div class="col-auto">
+                    📈
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="mt-4">
-        <a class="btn btn-outline-secondary" asp-action="Logs">🔍 View My Logs</a>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="row gy-3">
+            <div class="col-md-6">
+                <div class="card shadow-sm bg-gradient-info text-white">
+                    <div class="card-body">
+                        <h5>Total Actions</h5>
+                        <p class="fs-4">@Model.TotalActions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Encodes
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><p class="fs-4 text-success">@Model.EncodeCount</p></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-shield fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Decodes
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><p class="fs-4 text-warning">@Model.DecodeCount</p></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-unlock-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <h6>Last Action</h6>
+                        <p><strong>@Model.LastAction</strong> at @Model.LastActionTime?.ToString("f")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

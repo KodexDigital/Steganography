@@ -86,17 +86,5 @@ namespace Steganography.Controllers
 
             return View(model);
         }
-        
-        [HttpGet("logs")]
-        public IActionResult Logs()
-        {
-            var username = User.Identity?.Name ?? "kodex";
-            var logs = LogHelper.GetLogs()
-                                .Where(log => log.Contains($"User: {username}"))
-                                .OrderByDescending(l => l)
-                                .ToArray();
-
-            return View(logs);
-        }
     }
 }
