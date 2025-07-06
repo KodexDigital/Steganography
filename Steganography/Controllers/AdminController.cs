@@ -1,12 +1,14 @@
 ﻿using Anaconda.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Steganography.Services;
 
 namespace Steganography.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController(IActivityLoggerService activityLoggerService) : Controller
     {
+        protected readonly IActivityLoggerService _activityLoggerService = activityLoggerService;
+        public IActionResult Index() => View();
         public IActionResult Logs()
         {
             //log by user
@@ -26,10 +28,11 @@ namespace Steganography.Controllers
             return View("Logs", allLogs);
         }
 
-        public IActionResult VisitorLogs()
+        [HttpGet("visits")]
+        public async Task<IActionResult> VisitorLogs()
         {
-            //var logs = _context.VisitorLogs.OrderByDescending(l => l.VisitTime).ToList();
-            return View();
+            var visits = await _activityLoggerService.GetVisitationInfosAsync();
+            return View(visits);
         }
     }
 }

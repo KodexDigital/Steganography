@@ -1,6 +1,7 @@
 ﻿using Anaconda.DataLayer;
 using Anaconda.Helpers;
 using Anaconda.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Steganography.Services
 {
@@ -38,6 +39,31 @@ namespace Steganography.Services
 			}
         }
 
+        public async Task<IEnumerable<VisitationInfo>> GetVisitationInfosAsync()
+        {
+            try
+            {
+                var visitations = await dbContext.VisitationInfos.Include(v => v.Location).AsNoTracking()
+                    .OrderByDescending(v => v.CreatedAt).ToListAsync();
+                return visitations;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<VisitationInfo> GetVisitationInfoAsync(Guid visitationId)
+        {
+            try
+            {
+                var visitation = await dbContext.VisitationInfos.Include(v => v.Location).FirstOrDefaultAsync(v => v.Id.Equals(visitationId));
+                return visitation!;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         private async Task<GeoLocation> SaveUserLocationAsync(Anaconda.UserViewResponse.ServiceResponses.UserGeolocationResponse geoJson)
         {
             var location = await dbContext.GeoLocations.AddAsync(new GeoLocation
