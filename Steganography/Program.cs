@@ -26,7 +26,7 @@ builder.Services.AddSession(options =>
     options.Cookie.Path = "/";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
-builder.Services.AddIdentityCore<ApplicationUser>(opt =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
 {
     opt.Password.RequireDigit = true;
     opt.Password.RequiredLength = 8;

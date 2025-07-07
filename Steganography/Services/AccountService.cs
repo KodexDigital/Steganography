@@ -4,23 +4,24 @@ using Anaconda.Models;
 using Anaconda.Requests;
 using Anaconda.Settings;
 using Anaconda.UserViewResponse;
-using Azure.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 
 namespace Steganography.Services
 {
-    public class AccountService(ServiceDbContext dbContext, IEmailService emailService, UserManager<ApplicationUser> userManager,
-        IOptionsSnapshot<SystemSettings> settings) : IAccountService
+    public class AccountService(ServiceDbContext dbContext, IEmailService emailService, UserManager<ApplicationUser> userManager, 
+        SignInManager<ApplicationUser> signInManager, IOptionsSnapshot<SystemSettings> settings) : IAccountService
     {
         protected readonly ServiceDbContext dbContext = dbContext;
         protected readonly IEmailService emailService = emailService;
         protected readonly UserManager<ApplicationUser> userManager = userManager;
+        protected readonly SignInManager<ApplicationUser> signInManager = signInManager;
         protected readonly SystemSettings settings = settings.Value;
         public async Task<ResponseHandler> RegisterUserAsync(string email)
         {
@@ -36,50 +37,60 @@ namespace Steganography.Services
                 }
                 else
                 {
-                    var regUser = await dbContext.Users.AddAsync(new ApplicationUser
+                    var regUser = new ApplicationUser
                     {
                         Email = mail.Address,
                         UserName = mail.User,
-                    });
-                    var saved = await dbContext.SaveChangesAsync() > 0;
-                    // send email verification link
-                    if (saved)
+                        PasswordHash = settings.NotImportantTmpPass,
+                    };
+                    
+                    var result = await userManager.CreateAsync(regUser, regUser.PasswordHash!);
+                    if(result is not null || result!.Succeeded)
                     {
-                        var token = await GenerateEmailVerificationTokenAsync(regUser.Entity);
-                        regUser.Entity.VerificationToken = token;
-                        regUser.Entity.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
-                        await userManager.UpdateAsync(regUser.Entity);
-
-                        var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
-                        var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
+                        // send email verification link
+                        if (result.Succeeded)
                         {
-                            Recipients =
-                            [
-                                new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
-                            ],
-                            Subject = "Account Verification",
-                            Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
-                        });
+                            var token = await GenerateEmailVerificationTokenAsync(regUser);
+                            regUser.VerificationToken = token;
+                            regUser.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
+                            await userManager.UpdateAsync(regUser);
 
-                        if (sentMailResponse.Status)
-                        {
-                            var newUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(regUser.Entity.Id));
-                            if (newUser is not null)
+                            var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
+                            var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
                             {
-                                newUser.VerificationSentAt = DateTime.Now;
-                                dbContext.Users.Update(newUser);
-                                await dbContext.SaveChangesAsync();
-                            }
-                            response.Message = "Verification email sent successfully.";
-                        }
-                        else
-                        {
-                            response.Message = "Failed to send verification email.";
-                            response.Status = false;
-                        }
-                    }
+                                Recipients =
+                                [
+                                    new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
+                                ],
+                                Subject = "Account Verification",
+                                Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
+                            });
 
-                    response.Message = "User registered successfully.";
+                            if (sentMailResponse.Status)
+                            {
+                                var newUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(regUser.Id));
+                                if (newUser is not null)
+                                {
+                                    newUser.VerificationSentAt = DateTime.Now;
+                                    dbContext.Users.Update(newUser);
+                                    await dbContext.SaveChangesAsync();
+                                }
+                                response.Message = "Verification email sent successfully.";
+                            }
+                            else
+                            {
+                                response.Message = "Failed to send verification email.";
+                                response.Status = false;
+                            }
+                        }
+
+                        response.Message = "User registered successfully.";
+                    }
+                    else
+                    {
+                        response.Message = "Failed to register user. Please try again.";
+                        response.Status = false;
+                    }
                 }
 
                 LogHelper.Log("Account Registration", response.Message, "Success", email, null);
@@ -222,6 +233,10 @@ namespace Steganography.Services
 
                 if (DateTime.Now > user.VerificationTokenExpires)
                     throw new Exception("Verification token has expired");
+
+                await signInManager.SignInAsync(user, isPersistent: true);
+                response.Status = true;
+                response.Message = "User logged in successfully.";
             }
             catch (Exception ex)
             {
@@ -248,6 +263,23 @@ namespace Steganography.Services
             return response;
         }
 
+        public async Task<ResponseHandler> LogoutAsync()
+        {
+            var response = new ResponseHandler();
+            try
+            {
+                await signInManager.SignOutAsync();
+                response.Message = "User logged out successfully.";
+                response.Status = true;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "An error occurred while locking the user account";
+            }
+
+            return response;
+        }
         protected async Task<string> GenerateEmailVerificationTokenAsync(ApplicationUser identityUser)
         {
             var token = await userManager.GenerateEmailConfirmationTokenAsync(identityUser);

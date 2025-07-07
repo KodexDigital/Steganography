@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Steganography.Services;
+using Steganography.ViewModels;
 using System.Threading.Tasks;
 
 namespace Steganography.Controllers
@@ -9,15 +10,27 @@ namespace Steganography.Controllers
         protected readonly IAccountService accountService = accountService;
 
         [HttpPost("register")]
-        public IActionResult Register()
+        public async Task<IActionResult> Register(AuthenticationViewModel model)
         {
-            return View();
+            var registrationResult = await accountService.RegisterUserAsync(model.Email!);
+            if(registrationResult.Status)
+                TempData["SuccessMessage"] = "User registration successful. Please check your email to verify account and gain access";
+            else
+                TempData["ErrorMessage"] = "User registraton failed. Please try again later.";
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost("login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login(AuthenticationViewModel model)
         {
-            return View();
+            var loginResult = await accountService.LoginAsync(model.Email!);
+            if (loginResult.Status)
+                TempData["SuccessMessage"] = loginResult.Message;
+            else
+                TempData["ErrorMessage"] = loginResult.Message;
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet("verify")]
@@ -33,9 +46,10 @@ namespace Steganography.Controllers
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            await accountService.LogoutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Anaconda.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Steganography.Services;
 using Steganography.ViewModels;
 
 namespace Steganography.Controllers
 {
+    [Authorize]
     public class StegoController(ISteganographyService service) : UserBaseController
     {
         private readonly ISteganographyService _service = service;

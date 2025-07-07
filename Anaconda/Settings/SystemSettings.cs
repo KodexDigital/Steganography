@@ -4,5 +4,6 @@
     {
         public string? TokenExpiresInMinutes { get; set; }
         public string? AccountVerificationPath { get; set; }
+        public string? NotImportantTmpPass { get; set; }
     }
 }
