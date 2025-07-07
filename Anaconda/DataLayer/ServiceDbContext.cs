@@ -9,5 +9,6 @@ namespace Anaconda.DataLayer
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<VisitationInfo> VisitationInfos { get; set; }
         public DbSet<UserStat> UserStats { get; set; }
+        public DbSet<StegStatelessFile> StegFiles { get; set; }
     }
 }

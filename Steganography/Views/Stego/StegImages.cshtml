@@ -1,0 +1,130 @@
+﻿@using Anaconda.Models
+@model IEnumerable<StegStatelessFile>
+
+@{
+    ViewData["Title"] = "Steg Images";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+
+<div class="col-xl-5 col-md-8 mb-4" style="margin-left:-15px">
+    <div class="card border-left-secondary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Steg Files</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-file-image fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="font-size:12px">
+                <thead>
+                    <tr>
+                        <th>Sn</th>
+                        <th>File Name</th>
+                        <th>Key</th>
+                        <th>Image</th>
+                        <th>Created At</th>
+                        <th style="width:150px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sn = 1;
+                    }
+                    @foreach (var image in Model)
+                    {
+                        <tr>
+                            <td>@sn</td>
+                            <td>@image.FileName</td>
+                            <td>@image.ReferenceKey</td>
+                            <td><img src="@image.ImagePath" alt="@image.FileName" width="50" class="img-thumbnail" /></td>
+                            <td>@image.CreatedAt.ToString("f")</td>
+                            <td class="text-center">
+                                <a class="btn btn-sm bg-gradient-info text-white small" href="@image.ImagePath" target="_blank"><i class="fa fa-eye small"></i></a>
+                                <a class="btn btn-sm bg-gradient-primary text-white small" href="@image.ImagePath" download><i class="fa fa-cloud-download-alt small"></i></a>
+                                <a class="btn btn-sm bg-gradient-danger text-white small" data-toggle="modal" data-target="#deleteModal"><i class="fa fa-trash-alt small"></i></a>
+                                <!--Modal to delete file-->
+                                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                     aria-hidden="true" data-backdrop="static">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-gradient-warning text-white">
+                                                <h5 class="modal-title" id="exampleModalLabel">Deleting file comfirmation...</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <h5>This action will permanently delete the file. <br />Are you certain you want to proceed with deleting this file?</h5>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times-circle small"></i> Cancel</button>
+                                                <form asp-action="DeleteStegImage" asp-controller="Stego" method="post" asp-route-id="@image.Id">
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fa fa-trash-alt small"></i> Delete File
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        sn++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            responsive: true
+        });
+    });
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                        text: '@TempData["SuccessMessage"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+                <text>
+                    Swal.fire({
+                        icon: 'error',
+                        text: '@TempData["ErrorMessage"]',
+                        confirmButtonText: 'Dismiss'
+                    });
+                </text>
+    }
+</script>

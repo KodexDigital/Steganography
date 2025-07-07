@@ -8,6 +8,7 @@ namespace Steganography.Controllers
     public class StegoController(ISteganographyService service) : UserBaseController
     {
         private readonly ISteganographyService _service = service;
+        public IActionResult Index() => View();
 
         [HttpGet("steg-in")]
         public IActionResult StegIn() => View();
@@ -21,7 +22,7 @@ namespace Steganography.Controllers
                 File = model.Image,
                 SecretMessage = model.Message,
                 StegPassKey = model.StegKey
-            });
+            }, Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
 
             if (response.Status)
             {
@@ -42,7 +43,7 @@ namespace Steganography.Controllers
         public async Task<IActionResult> StegOut(DecodeViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-            var response = await _service.DecodeMessageAsync(model);
+            var response = await _service.DecodeMessageAsync(model, Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
             if (response.Status)
             {
                 TempData["SuccessMessage"] = response.Message;
@@ -56,7 +57,27 @@ namespace Steganography.Controllers
 
             return RedirectToAction(nameof(StegOut));
         }
-        public IActionResult Index() => View();
+
+        [HttpGet("steg-images")]
+        public async Task<IActionResult> StegImages()
+        {
+            var stegImages = await _service.GetAllStegFilesAsync(Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
+            return View(stegImages);
+        }
+
+        [HttpPost("delete-steg-file")]
+        public async Task<IActionResult> DeleteStegImage(Guid id)
+        {
+            var response = await _service.DeleteStegFileAsync(id);
+            if (!response.Status)
+            {
+                TempData["ErrorMessage"] = "Deleting file failed";
+                return RedirectToAction(nameof(StegImages));
+            }
+            
+            TempData["SuccessMessage"] = response.Message;
+            return RedirectToAction(nameof(StegImages));
+        }
 
         [HttpGet("stats")]
         public IActionResult Stats()
