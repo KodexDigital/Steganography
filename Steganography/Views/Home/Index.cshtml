@@ -2,9 +2,9 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    bool isAuthenticated = false;
 }
 
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
 <h1>Index here</h1>
 
@@ -69,7 +69,11 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-@if (isAuthenticated)
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+@if (!User.Identity!.IsAuthenticated)
 {
     <script>
         window.onload = function(){
@@ -88,4 +92,25 @@
           $('#regModal').modal('hide');
          $('#loginModal').modal('show');
      })
+    
+     @if (TempData["SuccessMessage"] != null)
+    {
+                    <text>
+                        Swal.fire({
+                            icon: 'success',
+                            text: '@TempData["SuccessMessage"]',
+                            confirmButtonText: 'OK'
+                        });
+                    </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+                    <text>
+                        Swal.fire({
+                            icon: 'error',
+                                text: '@TempData["ErrorMessage"]',
+                            confirmButtonText: 'Dismiss'
+                        });
+                    </text>
+    }
 </script>

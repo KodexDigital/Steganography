@@ -55,6 +55,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Home/Index";                // if not logged in
+    options.AccessDeniedPath = "/Account/AccessDenied";  // if logged in but forbidden
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ISteganographyService, SteganographyService>();
