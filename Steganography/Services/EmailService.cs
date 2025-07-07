@@ -9,7 +9,7 @@ namespace Steganography.Services
 {
     public class EmailService : IEmailService
     {
-        public async Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request)
+        public async Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request, string authHeaderKey)
         {
             var response = new ResponseHandler();
             var responseData = new ZohoSendMailResponse();
@@ -37,7 +37,7 @@ namespace Steganography.Services
 
                 var headerAuth = new Dictionary<string, string>
                 {
-                    {"Authorization", "Zoho-enczapikey wSsVR613/hfwW/t9zjaudOw5m1kDU17+ERsp2lX1uX+uSPyU/ccyl0LMBgH1T/AXEWJpQGZDob8pnhoA0GAIh9grzg1WDCiF9mqRe1U4J3x17qnvhDzOW2VakxaOLooOxghtn2ZlFcoq+g==c"}
+                    {"Authorization", authHeaderKey}
                 };
 
                 var httpResponse = await HttpHelper.SendRequest(req, "https://api.zeptomail.com", requestUrl, HttpMethod.Post, headerAuth, ApiRequestContentType.application_json);

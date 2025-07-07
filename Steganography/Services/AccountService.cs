@@ -64,7 +64,7 @@ namespace Steganography.Services
                                 ],
                                 Subject = "Account Verification",
                                 Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
-                            });
+                            },settings.DefaultEmailHeader!);
 
                             if (sentMailResponse.Status)
                             {
@@ -98,8 +98,8 @@ namespace Steganography.Services
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "An error occurred while registering the user";
-                LogHelper.Log("Account Registration", $"{response.Message} - {ex.Message}", "Failed", email, null);
+                response.Message = ex.Message;
+                LogHelper.Log("Account Registration", ex.Message, "Failed", email, null);
             }
             return response;
         }
@@ -112,7 +112,7 @@ namespace Steganography.Services
             {
                 TokenExtrator(verificationToken, out email, out string generatedToken);
                 var mail = new MailAddress(email);
-                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email!.ToLower() == mail.Address.ToLower() && u.VerificationToken == generatedToken)
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email!.ToLower() == mail.Address.ToLower() && u.VerificationToken == verificationToken)
                     ?? throw new Exception("User not found or invalid user");
 
                 if (DateTime.Now > user.VerificationTokenExpires)
@@ -136,8 +136,8 @@ namespace Steganography.Services
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "An error occurred while verifying the user";
-                LogHelper.Log("Account Verification", $"{response.Message} - {ex.Message}", "Failed", email, null);
+                response.Message = ex.Message;
+                LogHelper.Log("Account Verification", ex.Message, "Failed", email, null);
             }
 
             return response;
@@ -166,8 +166,8 @@ namespace Steganography.Services
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = $"An error occurred while locking the user account: {ex.Message}";
-                LogHelper.Log("Account Lock", $"{response.Message} - {ex.Message}", "Failed", userId.ToString(), null);
+                response.Message = ex.Message;
+                LogHelper.Log("Account Lock", response.Message, "Failed", userId.ToString(), null);
             }
             return response;
         }
@@ -202,19 +202,19 @@ namespace Steganography.Services
                         ],
                         Subject = "Access Token",
                         Body = $"Hi Stegian! <p>Please click on the link to login to steg: <a href='{callBackUrl}'>Login Now ==></a></p>"
-                    });
+                    }, settings.DefaultEmailHeader);
 
                     response.Status = sentMailResponse.Status;
                     response.Message = sentMailResponse.Status ? "Login link sent successfully." : "Failed to send login link.";
                 }
 
-                LogHelper.Log("Account Login", response.Message, response.Status ? "Success" : "Failed", user!.Id.ToString(), null);
+                LogHelper.Log("Account Login", response.Message, response.Status ? "Success" : "Failed", user?.Id.ToString() ?? string.Empty, null);
             }
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "An error occurred while login in the user";
-                LogHelper.Log("Account Login", $"{response.Message} - {ex.Message}", "Failed", userId.ToString(), null);
+                response.Message = ex.Message;
+                LogHelper.Log("Account Login", response.Message, "Failed", userId.ToString(), null);
             }
             return response;
         }
@@ -228,7 +228,7 @@ namespace Steganography.Services
                 TokenExtrator(accessToken, out email, out string generatedToken);
                 var mail = new MailAddress(email);
 
-                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email!.ToLower() == mail.Address.ToLower() && u.VerificationToken == generatedToken)
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email!.ToLower() == mail.Address.ToLower() && u.VerificationToken == accessToken)
                     ?? throw new Exception("User not found or invalid user");
 
                 if (DateTime.Now > user.VerificationTokenExpires)
@@ -241,8 +241,8 @@ namespace Steganography.Services
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "An error occurred while locking the user account";
-                LogHelper.Log("Account Login Access", $"{response.Message} - {ex.Message}", "Failed", email.ToString(), null);
+                response.Message = ex.Message;
+                LogHelper.Log("Account Login Access", response.Message, "Failed", email.ToString(), null);
             }
             return response;
         }
@@ -275,7 +275,7 @@ namespace Steganography.Services
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "An error occurred while locking the user account";
+                response.Message = ex.Message;
             }
 
             return response;

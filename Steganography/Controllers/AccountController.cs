@@ -16,7 +16,7 @@ namespace Steganography.Controllers
             if(registrationResult.Status)
                 TempData["SuccessMessage"] = "User registration successful. Please check your email to verify account and gain access";
             else
-                TempData["ErrorMessage"] = "User registraton failed. Please try again later.";
+                TempData["ErrorMessage"] = registrationResult.Message;
 
             return RedirectToAction("Index", "Home");
         }
@@ -39,9 +39,10 @@ namespace Steganography.Controllers
             var verificationResult = await accountService.UserAccountValidationAsync(token);
             if(!verificationResult.Status)
             {
-                ViewBag.ErrorMessage = verificationResult.Message;
-                return View("Error");
+                TempData["ErrorMessage"] = verificationResult.Message;
+                return RedirectToAction("Index", "Home");
             }
+
             return RedirectToAction("StegIn", "Stego");
         }
 
