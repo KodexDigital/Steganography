@@ -1,23 +1,20 @@
-﻿using Anaconda;
-using Anaconda.DataLayer;
+﻿using Anaconda.DataLayer;
+using Anaconda.Enums;
 using Anaconda.Helpers;
 using Anaconda.Models;
 using Anaconda.UserViewResponse;
 using Anaconda.UserViewResponse.ViewResponses;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Steganography.ViewModels;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Steganography.Services
 {
     public class SteganographyService(IWebHostEnvironment env, ServiceDbContext dbContext) : ISteganographyService
     {
         protected readonly IWebHostEnvironment _env = env;
-        protected readonly ServiceDbContext dbContext = dbContext;
+        protected readonly ServiceDbContext dbContext = dbContext;        
         protected readonly SteganographyHelper _steganographyHelper = new();
         public async Task<ResponseHandler<EncryptMessageResponse>> EncryptMessageAsync(EncodeViewModel model, Guid userId)
         {

@@ -1,4 +1,4 @@
-﻿namespace Anaconda
+﻿namespace Anaconda.Enums
 {
     public enum StegAction
     {

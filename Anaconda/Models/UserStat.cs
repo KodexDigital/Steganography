@@ -1,4 +1,6 @@
-﻿namespace Anaconda.Models
+﻿using Anaconda.Enums;
+
+namespace Anaconda.Models
 {
     public class UserStat : BaseModel
     {

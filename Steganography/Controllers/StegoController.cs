@@ -8,7 +8,6 @@ namespace Steganography.Controllers
     public class StegoController(ISteganographyService service) : UserBaseController
     {
         private readonly ISteganographyService _service = service;
-        public IActionResult Index() => View();
 
         [HttpGet("steg-in")]
         public IActionResult StegIn() => View();

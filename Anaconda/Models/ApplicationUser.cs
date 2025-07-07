@@ -1,8 +1,13 @@
-﻿namespace Anaconda.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Anaconda.Models
 {
-    public class ApplicationUser : BaseModel
+    public class ApplicationUser : IdentityUser<Guid>
     {
-        public string? EmailAddress { get; set; }
+        public DateTime? VerificationSentAt { get; set; }
+        public bool IsLocked { get; set; } = false;
+        public string? VerificationToken { get; set; }
+        public DateTime? VerificationTokenExpires { get; set; }
         public virtual ICollection<UserStat> UserStats { get; set; }
         public ApplicationUser()
         {
