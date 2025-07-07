@@ -95,7 +95,9 @@ namespace Steganography.Services
                     user.VerificationToken = null;
                     user.VerificationTokenExpires = null;
                     await userManager.UpdateAsync(user);
-                    response.Message = "User verified successfully.";
+
+                    await signInManager.SignInAsync(user, isPersistent: true);
+                    response.Message = "User logged in successfully.";
                 }
                 else
                 {
@@ -161,7 +163,7 @@ namespace Steganography.Services
                 {
                     var token = await GenerateEmailVerificationTokenAsync(user);
                     user.VerificationToken = token;
-                    user.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
+                    user.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!)/2);
                     await userManager.UpdateAsync(user);
 
                     var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
@@ -173,7 +175,7 @@ namespace Steganography.Services
                         ],
                         Subject = "Access Token",
                         Body = $"Hi Stegian! <p>Please click on the link to login to steg: <a href='{callBackUrl}'>Login Now ==></a></p>"
-                    }, settings.DefaultEmailHeader);
+                    }, settings.DefaultEmailHeader!);
 
                     response.Status = sentMailResponse.Status;
                     response.Message = sentMailResponse.Status ? "Login link sent successfully." : "Failed to send login link.";
@@ -206,7 +208,6 @@ namespace Steganography.Services
                     throw new Exception("Verification token has expired");
 
                 await signInManager.SignInAsync(user, isPersistent: true);
-                response.Status = true;
                 response.Message = "User logged in successfully.";
             }
             catch (Exception ex)
