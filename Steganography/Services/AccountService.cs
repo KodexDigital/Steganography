@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Net;
 using System.Net.Mail;
@@ -49,40 +50,7 @@ namespace Steganography.Services
                     {
                         // send email verification link
                         if (result.Succeeded)
-                        {
-                            var token = await GenerateEmailVerificationTokenAsync(regUser);
-                            regUser.VerificationToken = token;
-                            regUser.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
-                            await userManager.UpdateAsync(regUser);
-
-                            var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
-                            var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
-                            {
-                                Recipients =
-                                [
-                                    new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
-                                ],
-                                Subject = "Account Verification",
-                                Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
-                            },settings.DefaultEmailHeader!);
-
-                            if (sentMailResponse.Status)
-                            {
-                                var newUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(regUser.Id));
-                                if (newUser is not null)
-                                {
-                                    newUser.VerificationSentAt = DateTime.Now;
-                                    dbContext.Users.Update(newUser);
-                                    await dbContext.SaveChangesAsync();
-                                }
-                                response.Message = "Verification email sent successfully.";
-                            }
-                            else
-                            {
-                                response.Message = "Failed to send verification email.";
-                                response.Status = false;
-                            }
-                        }
+                            await GenerateRegLinkAndSendAsync(response, mail, regUser);
 
                         response.Message = "User registered successfully.";
                     }
@@ -116,7 +84,10 @@ namespace Steganography.Services
                     ?? throw new Exception("User not found or invalid user");
 
                 if (DateTime.Now > user.VerificationTokenExpires)
-                    throw new Exception("Verification token has expired");
+                {
+                    await GenerateRegLinkAndSendAsync(response, mail, user);
+                    throw new Exception("Verification token has expired. Please check your email for the newly generated link");
+                }
 
                 var result = await userManager.ConfirmEmailAsync(user, generatedToken);
                 if ((result is not null && result.Succeeded))
@@ -295,6 +266,41 @@ namespace Steganography.Services
             var splitToken = decodedTokenData.Split(':');
             email = splitToken.FirstOrDefault()!;
             generatedToken = splitToken.LastOrDefault()!;
+        }
+        protected async Task GenerateRegLinkAndSendAsync(ResponseHandler response, MailAddress mail, ApplicationUser regUser)
+        {
+            var token = await GenerateEmailVerificationTokenAsync(regUser);
+            regUser.VerificationToken = token;
+            regUser.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
+            await userManager.UpdateAsync(regUser);
+
+            var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
+            var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
+            {
+                Recipients =
+                [
+                    new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
+                ],
+                Subject = "Account Verification",
+                Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
+            }, settings.DefaultEmailHeader!);
+
+            if (sentMailResponse.Status)
+            {
+                var newUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(regUser.Id));
+                if (newUser is not null)
+                {
+                    newUser.VerificationSentAt = DateTime.Now;
+                    dbContext.Users.Update(newUser);
+                    await dbContext.SaveChangesAsync();
+                }
+                response.Message = "Verification email sent successfully.";
+            }
+            else
+            {
+                response.Message = "Failed to send verification email.";
+                response.Status = false;
+            }
         }
     }
 }
