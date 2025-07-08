@@ -63,7 +63,7 @@ namespace Steganography.Controllers
         [HttpGet("steg-images")]
         public async Task<IActionResult> StegImages()
         {
-            var stegImages = await _service.GetAllStegFilesAsync(AuthenticateUser());
+            var stegImages = await _service.GetAllStegFilesAsync(AuthenticateUser().UserId);
             return View(stegImages);
         }
 
@@ -84,13 +84,18 @@ namespace Steganography.Controllers
         [HttpGet("stats")]
         public IActionResult Stats()
         {
-            var username = User.Identity?.Name ?? "kodex";
+            var username = User.Identity?.Name;
             var logs = LogHelper.GetLogs()
-                .Where(l => l.Contains($"User: {username}"))
+                .Where(l => l.Contains($"| User: {username} |"))
                 .ToList();
 
             var encodeCount = logs.Count(l => l.Contains("| Encode |"));
+            var encodeSuccessCount = logs.Count(l => l.Contains("| Encode | Success |"));
+            var encodeFailedCount = logs.Count(l => l.Contains("| Encode | Failed |"));
+
             var decodeCount = logs.Count(l => l.Contains("| Decode |"));
+            var decodeSuccessCount = logs.Count(l => l.Contains("| Decode | Success |"));
+            var decodeFailedCount = logs.Count(l => l.Contains("| Decode | Failed |"));
 
             var lastLog = logs.LastOrDefault();
 
@@ -102,18 +107,26 @@ namespace Steganography.Controllers
                 Username = username,
                 TotalActions = logs.Count,
                 EncodeCount = encodeCount,
+                EncodeSuccessCount = encodeSuccessCount,
+                EncodeFailedCount = encodeFailedCount,
                 DecodeCount = decodeCount,
+                DecodeSuccessCount = decodeSuccessCount,
+                DecodeFailedCount = decodeFailedCount,
                 LastAction = lastAction ?? "N/A",
                 LastActionTime = lastTime
             };
 
             return View(model);
         }
-        private Guid AuthenticateUser()
+        private (Guid UserId, string UserName) AuthenticateUser()
         {
             if (User.Identity!.IsAuthenticated)
-                return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            return Guid.Empty;
+            {
+                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var userName = User.Identity.Name!;
+                return (userId, userName);
+            }
+            return (Guid.Empty, string.Empty);
         }
     }
 }

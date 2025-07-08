@@ -3,22 +3,129 @@
 
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Entrance";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
-<h1>Index here</h1>
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">📌 Project Overview</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <p>
+                    <strong>K-Steg</strong> is a web-based steganography application designed to allow users to securely hide and extract messages within images. It serves as a practical demonstration of data concealment techniques in cybersecurity and can be used for education, secure communication, or forensic testing purposes.
+                </p>
+                <hr>
+                <h4>🎯 Objectives</h4>
+                    <div class="card border-left-info">
+                        <div class="card-body">
+                            Enable users to embed secret text messages inside image files using Least Significant Bit (LSB) techniques.
+                        </div>
+                    </div>
+                    <div class="card border-left-info">
+                        <div class="card-body">
+                        Allow secure retrieval and decoding of embedded messages from stego-images.
+                        </div>
+                    </div>
+                    <div class="card border-left-info">
+                        <div class="card-body">
+                        Ensure a user-friendly interface with authentication, session tracking, and log history.
+                        </div>
+                    </div>
+                    <div class="card border-left-info">
+                        <div class="card-body">
+                        Store and manage encoded images per user, with access control and download options.
+                        </div>
+                    </div>
+                    <hr />
+                <h4>🛠️ Key Features</h4>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        🔐 User Authentication & Authorization: Role-based access for encoding/decoding features.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        🖼️ Image Upload & Preview: Supports JPEG, PNG formats with live preview and validation.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        📥 Downloadable Stego Images: Encoded images can be viewed or downloaded securely.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        📄 Activity Logs: Tracks encode/decode actions per user, with timestamps.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        🗂️ Folder-Based Storage: Encoded images are saved to user-specific folders; paths are stored in the database.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        ⚙️ SHA-512 Hashing, Random Key Generation and AES encryption to encoded messages: Adds message integrity and optional passcode-based protection.
+                    </div>
+                </div>
+                <div class="card border-bottom-primary">
+                    <div class="card-body">
+                        🧪 Error Handling & Access Denied Pages: Friendly feedback and proper redirects for unauthorized access.
+                    </div>
+                </div>
+                    
+            </div>
+        </div>
+    </div>
 
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">🌟 Support This Project</h6>
+            </div>
+            <div class="card-body">
+                <div class="py-1 text-justify">
+                    If you find this project helpful, please consider supporting its ongoing development. Your contribution helps keep it free, secure, and actively maintained.
+                </div>
+                <hr />
+                <div class="mt-4 text-center small">
+                    <a class="btn btn-outline-info rounded-pill" href="https://paystack.shop/pay/daily-access" target="_blank">Donate Now <i class="fa-solid fa-hand-holding-dollar"></i></a>
+                </div>
+            </div>
+        </div>
 
-
-
-
-
-
-
-
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">📊 Outcomes</h6>
+            </div>
+            <div class="card-body">
+                <div class="card border-left-success border-bottom-success">
+                    <div class="card-body">
+                        Reduced average decode time to under 1 second for messages ≤ 1,000 characters.
+                    </div>
+                </div>
+                <div class="card border-left-success border-bottom-success">
+                    <div class="card-body">
+                        Achieved 100% message accuracy during QA testing.
+                    </div>
+                </div>
+                <div class="card border-left-success border-bottom-success">
+                    <div class="card-body">
+                        Positive feedback from initial users on usability and interface responsiveness.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!-- Registration Modal-->
@@ -80,7 +187,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-@if (User.Identity!.IsAuthenticated) // use negation
+@if (!User.Identity!.IsAuthenticated) // use negation
 {
     <script>
         window.onload = function(){

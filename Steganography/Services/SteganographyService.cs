@@ -16,7 +16,7 @@ namespace Steganography.Services
         protected readonly IWebHostEnvironment _env = env;
         protected readonly ServiceDbContext dbContext = dbContext;        
         protected readonly SteganographyHelper _steganographyHelper = new();
-        public async Task<ResponseHandler<EncryptMessageResponse>> EncryptMessageAsync(EncodeViewModel model, Guid userId)
+        public async Task<ResponseHandler<EncryptMessageResponse>> EncryptMessageAsync(EncodeViewModel model, (Guid userId, string username) user)
         {
             var response = new ResponseHandler<EncryptMessageResponse>();
             string originalPath = string.Empty;
@@ -59,9 +59,9 @@ namespace Steganography.Services
                 encodedImage.Save(outPath, ImageFormat.Png);
 
                 //save to db for download
-                await dbContext.StegFiles.AddAsync(new Anaconda.Models.StegStatelessFile
+                await dbContext.StegFiles.AddAsync(new StegStatelessFile
                 {
-                    UserId = userId,
+                    UserId = user.userId,
                     FileName = Path.GetFileNameWithoutExtension(name),
                     ImagePath = $"uploads/xyz_stegs/{name}",
                     Reference = userReference,
@@ -71,22 +71,22 @@ namespace Steganography.Services
 
                 response.Data = new EncryptMessageResponse(string.Concat("/uploads/xyz_stegs/", name));
                 response.Message = "Message successfully embedded!";
-                LogHelper.Log("Encode", response.Message, "Success", "kodex", null);
+                LogHelper.Log(StegAction.Encode.ToString(), response.Message, "Success", user.username!);
             }
             catch (Exception ex)
             {
                 response.Message = "Failed to encode message";
                 response.Status = false;
-                LogHelper.Log("Encode", ex.Message, "Faild", "kodex", null);
+                LogHelper.Log(StegAction.Encode.ToString(), ex.Message, "Failed", user.username!);
             }
 
             //remove the original file
             if (File.Exists(originalPath)) File.Delete(originalPath);
-            //await TrackUserStats(StegAction.Encode, userId);
+            await TrackUserStats(StegAction.Encode, user.userId);
             return response;
         }
 
-        public async Task<ResponseHandler<StegOutViewModel>> DecodeMessageAsync(DecodeViewModel model, Guid userId)
+        public async Task<ResponseHandler<StegOutViewModel>> DecodeMessageAsync(DecodeViewModel model, (Guid userId, string username) user)
         {
             var response = new ResponseHandler<StegOutViewModel>();
             try
@@ -106,16 +106,16 @@ namespace Steganography.Services
 
                 response.Data = new StegOutViewModel(decrypted );
                 response.Message = "Message successfully extracted!";
-                LogHelper.Log("Decode", response.Message, "Success", "kodex", null);
+                LogHelper.Log(StegAction.Decode.ToString(), response.Message, "Success", user.username!);
             }
             catch (Exception ex)
             {
                 response.Message = "Failed to extract message";
                 response.Status = false;
-                LogHelper.Log("Decode", ex.Message, "Faild", "kodex", null);
+                LogHelper.Log(StegAction.Decode.ToString(), ex.Message, "Failed", user.username!);
             }
 
-            //await TrackUserStats(StegAction.Decode, userId);
+            await TrackUserStats(StegAction.Decode, user.userId);
             return response;
         }
 

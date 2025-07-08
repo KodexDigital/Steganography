@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -61,13 +59,13 @@ namespace Steganography.Services
                     }
                 }
 
-                LogHelper.Log("Account Registration", response.Message, "Success", email, null);
+                LogHelper.Log("Account Registration", response.Message, "Success", email);
             }
             catch (Exception ex)
             {
                 response.Status = false;
                 response.Message = ex.Message;
-                LogHelper.Log("Account Registration", ex.Message, "Failed", email, null);
+                LogHelper.Log("Account Registration", ex.Message, "Failed", email);
             }
             return response;
         }
@@ -104,13 +102,13 @@ namespace Steganography.Services
                     response.Message = "Failed to verify user. Please try again.";
                     response.Status = false;
                 }
-                LogHelper.Log("Account Verification", response.Message, response.Status ? "Success" : "Failed", email, null);
+                LogHelper.Log("Account Verification", response.Message, response.Status ? "Success" : "Failed", email);
             }
             catch (Exception ex)
             {
                 response.Status = false;
                 response.Message = ex.Message;
-                LogHelper.Log("Account Verification", ex.Message, "Failed", email, null);
+                LogHelper.Log("Account Verification", ex.Message, "Failed", email);
             }
 
             return response;
@@ -134,13 +132,13 @@ namespace Steganography.Services
                     await dbContext.SaveChangesAsync();
                     response.Message = "User account locked successfully.";
                 }
-                LogHelper.Log("Account Lock", response.Message, "Success", userId.ToString(), null);
+                LogHelper.Log("Account Lock", response.Message, "Success", userId.ToString());
             }
             catch (Exception ex)
             {
                 response.Status = false;
                 response.Message = ex.Message;
-                LogHelper.Log("Account Lock", response.Message, "Failed", userId.ToString(), null);
+                LogHelper.Log("Account Lock", response.Message, "Failed", userId.ToString());
             }
             return response;
         }
@@ -181,13 +179,13 @@ namespace Steganography.Services
                     response.Message = sentMailResponse.Status ? "Login link sent successfully." : "Failed to send login link.";
                 }
 
-                LogHelper.Log("Account Login", response.Message, response.Status ? "Success" : "Failed", user?.Id.ToString() ?? string.Empty, null);
+                LogHelper.Log("Account Login", response.Message, response.Status ? "Success" : "Failed", user?.Id.ToString() ?? string.Empty);
             }
             catch (Exception ex)
             {
                 response.Status = false;
                 response.Message = ex.Message;
-                LogHelper.Log("Account Login", response.Message, "Failed", userId.ToString(), null);
+                LogHelper.Log("Account Login", response.Message, "Failed", userId.ToString());
             }
             return response;
         }
@@ -214,7 +212,7 @@ namespace Steganography.Services
             {
                 response.Status = false;
                 response.Message = ex.Message;
-                LogHelper.Log("Account Login Access", response.Message, "Failed", email.ToString(), null);
+                LogHelper.Log("Account Login Access", response.Message, "Failed", email.ToString());
             }
             return response;
         }

@@ -10,7 +10,7 @@
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Username’s Activity Summary</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Username!.ToUpper()’s Activity Summary</div>
                 </div>
                 <div class="col-auto">
                     📈
@@ -22,23 +22,23 @@
 
 <div class="card shadow mb-4">
     <div class="card-body">
-        <div class="row gy-3">
+        <div class="row gy-1">
             <div class="col-md-6">
                 <div class="card shadow-sm bg-gradient-info text-white">
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <h5>Total Actions</h5>
                         <p class="fs-4">@Model.TotalActions</p>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div class="card border-left-success shadow h-100">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Encodes
+                                    Encodes <br /><span class="badge btn btn-sm bg-success p-1 text-white">@Model.EncodeSuccessCount <i class="fa-solid fa-arrow-trend-up"></i></span>
+                                    <span class="badge bg-danger mx-1 p-1 text-white">@Model.EncodeFailedCount <i class="fa-solid fa-arrow-trend-down"></i></span>
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><p class="fs-4 text-success">@Model.EncodeCount</p></div>
                             </div>
@@ -51,12 +51,13 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card border-left-warning shadow h-100 py-1">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Decodes
+                                    Decodes <br /><span class="badge btn btn-sm bg-success p-1 text-white">@Model.DecodeSuccessCount <i class="fa-solid fa-arrow-trend-up"></i></span>
+                                    <span class="badge bg-danger mx-1 p-1 text-white">@Model.DecodeFailedCount <i class="fa-solid fa-arrow-trend-down"></i></span>
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><p class="fs-4 text-warning">@Model.DecodeCount</p></div>
                             </div>
@@ -72,7 +73,14 @@
                 <div class="card border-info">
                     <div class="card-body">
                         <h6>Last Action</h6>
-                        <p><strong>@Model.LastAction</strong> at @Model.LastActionTime?.ToString("f")</p>
+                        @if(Model.LastAction != "N/A")
+                        {
+                            <p><strong>@Model.LastAction</strong> at @Model.LastActionTime?.ToString("f")</p>
+                        }
+                        else
+                        {
+                            <p><strong>@Model.LastAction</strong></p>
+                        }
                     </div>
                 </div>
             </div>
