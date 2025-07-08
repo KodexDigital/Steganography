@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Steganography.Services;
 using Steganography.ViewModels;
+using System.Security.Claims;
 
 namespace Steganography.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class StegoController(ISteganographyService service) : UserBaseController
     {
         private readonly ISteganographyService _service = service;
@@ -23,7 +24,7 @@ namespace Steganography.Controllers
                 File = model.Image,
                 SecretMessage = model.Message,
                 StegPassKey = model.StegKey
-            }, Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
+            }, AuthenticateUser());
 
             if (response.Status)
             {
@@ -44,7 +45,7 @@ namespace Steganography.Controllers
         public async Task<IActionResult> StegOut(DecodeViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-            var response = await _service.DecodeMessageAsync(model, Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
+            var response = await _service.DecodeMessageAsync(model, AuthenticateUser());
             if (response.Status)
             {
                 TempData["SuccessMessage"] = response.Message;
@@ -62,7 +63,7 @@ namespace Steganography.Controllers
         [HttpGet("steg-images")]
         public async Task<IActionResult> StegImages()
         {
-            var stegImages = await _service.GetAllStegFilesAsync(Guid.Parse("DAD620D6-0FB4-4945-BCF7-6C2E36B82EA2"));
+            var stegImages = await _service.GetAllStegFilesAsync(AuthenticateUser());
             return View(stegImages);
         }
 
@@ -75,7 +76,7 @@ namespace Steganography.Controllers
                 TempData["ErrorMessage"] = "Deleting file failed";
                 return RedirectToAction(nameof(StegImages));
             }
-            
+
             TempData["SuccessMessage"] = response.Message;
             return RedirectToAction(nameof(StegImages));
         }
@@ -107,6 +108,12 @@ namespace Steganography.Controllers
             };
 
             return View(model);
+        }
+        private Guid AuthenticateUser()
+        {
+            if (User.Identity!.IsAuthenticated)
+                return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            return Guid.Empty;
         }
     }
 }

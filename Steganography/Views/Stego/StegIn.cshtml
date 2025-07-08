@@ -123,7 +123,7 @@
             <div class="card-body img-thumbnail">
                 <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
             </div>
-            <a class="btn btn-secondary bg-gradient-primary text-white">Download File <i class="fa fa-cloud-download"></i></a>
+            @* <a class="btn btn-secondary bg-gradient-primary text-white">Download File <i class="fa fa-cloud-download"></i></a> *@
         </div>
     </div>
 </div>
@@ -133,22 +133,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-@* <script>
-    function showAlert() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Are you sure?',
-            text: 'This action cannot be undone.',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire('Deleted!', 'Your item has been deleted.', 'success');
-            }
-        });
-    }
-</script> *@
+
 <script>
     $(document).on('change', '.file-input', function() {
       var filesCount = $(this)[0].files.length;
@@ -176,7 +161,6 @@
                 <text>
                     Swal.fire({
                         icon: 'success',
-                        // title: 'Success',
                         text: '@TempData["SuccessMessage"]',
                         confirmButtonText: 'OK'
                     });
