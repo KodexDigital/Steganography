@@ -8,7 +8,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Steganography Tool</title>
+    <title>@ViewData["Title"] | KIPS Steg Tool</title>
+    <link rel="icon" type="image/x-icon" href="~/icons/stegtool.ico" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -24,7 +25,6 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet"/>
-
      <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.css" rel="stylesheet">
     <style>
         .nav_link:hover{
@@ -61,7 +61,7 @@
             }
             else
             {
-                @if (!isAuthenticated)
+                @if (isAuthenticated)
                 {
                     <li class="nav-item bg-warning">
                         <a class="nav-link nav_link" asp-action="StegIn" asp-controller="Stego">
@@ -109,16 +109,14 @@
                     {
                         <!-- Topbar Navbar -->
                         <ul class="navbar-nav ml-auto">
-                            <!-- Nav Item - User Information -->
                             <li class="nav-item dropdown no-arrow">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">USERNAME</span>
-                                    <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name!.ToUpper()</span>
+                                    <img class="img-profile rounded-circle" src="~/icons/stegtool.jpg" />
                                 </a>
                                 <!-- Dropdown - User Information -->
-                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                     aria-labelledby="userDropdown">
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                     <a class="dropdown-item" asp-action="StegImages" asp-controller="Stego">
                                         <i class="fas fa-file-image fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Steg Files
