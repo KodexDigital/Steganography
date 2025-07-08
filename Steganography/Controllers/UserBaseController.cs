@@ -3,7 +3,7 @@ using Steganography.FilterAttributes;
 
 namespace Steganography.Controllers
 {
-    [ServiceFilter(typeof(UserActivityCaptureFilter))]
+    //[ServiceFilter(typeof(UserActivityCaptureFilter))]
     public class UserBaseController : Controller
     {}
 }

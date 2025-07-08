@@ -47,6 +47,9 @@ namespace Steganography.Controllers
             return RedirectToAction("StegIn", "Stego");
         }
 
+        [HttpGet]
+        public IActionResult AccessDenied() => View();
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {

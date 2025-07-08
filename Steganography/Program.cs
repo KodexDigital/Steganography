@@ -57,8 +57,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Home/Index";                // if not logged in
-    options.AccessDeniedPath = "/Account/AccessDenied";  // if logged in but forbidden
+    options.LoginPath = "/Account/AccessDenied";
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 builder.Services.AddHttpContextAccessor();
