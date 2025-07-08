@@ -22,6 +22,7 @@ namespace Steganography.Controllers
         }
 
         [HttpPost("login")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(AuthenticationViewModel model)
         {
             var loginResult = await accountService.LoginAsync(model.Email!);
