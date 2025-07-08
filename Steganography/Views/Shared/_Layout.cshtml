@@ -7,13 +7,16 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta name="theme-color" content="#0d6efd">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] | KIPS Steg Tool</title>
     <link rel="icon" type="image/x-icon" href="~/icons/stegtool.ico" />
+    <link rel="apple-touch-icon" href="~/icons/stegtool.jpg">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="manifest" href="~/manifest.json"> 
     <link href="~/font-awesome/css/all.css" rel="stylesheet" />
     <link href="~/font-awesome/css/all.min.css" rel="stylesheet" />
 
@@ -104,7 +107,10 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    
+                    <button id="installBtn" class="btn btn-info" style="display:none;">
+                        <i class="fa fa-cloud-download"></i> Install App
+                    </button>
+
                     @if (User.Identity!.IsAuthenticated)
                     {
                         <!-- Topbar Navbar -->
@@ -206,5 +212,41 @@
     <script src="js/demo/datatables-demo.js"></script>
    
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.js"></script>
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+          // Prevent default mini-infobar
+          e.preventDefault();
+          deferredPrompt = e;
+
+          // Show the install button
+          const installBtn = document.getElementById('installBtn');
+          if (installBtn) {
+            installBtn.style.display = 'inline-block';
+
+            installBtn.addEventListener('click', () => {
+              installBtn.style.display = 'none';
+              deferredPrompt.prompt();
+
+              deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                  console.log('✅ User accepted the install prompt');
+                } else {
+                  console.log('❌ User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+              });
+            });
+          }
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker Registered'));
+        }
+    </script>
 </body>
 </html>

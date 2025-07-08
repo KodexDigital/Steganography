@@ -1,18 +1,19 @@
 ﻿{
-  "name": "StegoTool",
-  "short_name": "Stego",
+  "name": "K-Steg",
+  "short_name": "StegTool",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0d6efd",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icons/stegtool.jpg",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icons/stegtool.jpg",
       "sizes": "512x512",
       "type": "image/png"
     }
