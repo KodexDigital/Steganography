@@ -6,7 +6,7 @@ using Steganography.ViewModels;
 
 namespace Steganography.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class StegoController(ISteganographyService service) : UserBaseController
     {
         private readonly ISteganographyService _service = service;

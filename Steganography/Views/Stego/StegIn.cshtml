@@ -79,7 +79,7 @@
                 <form asp-action="StegIn" asp-controller="Stego" method="post" enctype="multipart/form-data">
                     <div class="form-group pb-2">
                         <label>Message</label>
-                        <textarea asp-for="Message" class="form-control" rows="7" placeholder="Enter your secret message here"></textarea>
+                        <textarea asp-for="Message" class="form-control" rows="7" placeholder="Enter your secret message here" id="editor"></textarea>
                         <span asp-validation-for="Message" class="text-danger small"></span>
                     </div>
                     <div class="row">
@@ -192,4 +192,21 @@
                     });
                 </text>
     }
+    $(document).ready(function() {
+      $('#editor').summernote({
+          height: 300,   
+          minHeight: 150,
+          maxHeight: 500,
+          focus: true,
+          placeholder: 'Start typing here...',
+          toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']]
+          ]
+      });
+    });
 </script>

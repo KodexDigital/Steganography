@@ -117,7 +117,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body">
-                <textarea asp-for="ExtractedMessage" class="form-control" disabled rows="20" placeholder="Extracted sacred message will appear here" style="font-family:Candara"></textarea>
+                <textarea asp-for="ExtractedMessage" class="form-control" style="font-family:Candara" id="editor"></textarea>
             </div>
         </div>
     </div>
@@ -170,4 +170,13 @@
                         });
                     </text>
     }
+     $(document).ready(function() {
+         $('#editor').summernote({
+             airMode: false,
+              toolbar: false,
+              disableResizeEditor: true,
+              disableDragAndDrop: true,
+              height: 500
+         }).summernote('disable');
+    });
 </script>
