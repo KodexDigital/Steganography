@@ -66,6 +66,7 @@ builder.Services.AddTransient<ISteganographyService, SteganographyService>();
 builder.Services.AddTransient<IActivityLoggerService, ActivityLoggerService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
 
 builder.Services.Configure<SystemSettings>(builder.Configuration.GetSection(nameof(SystemSettings)));
 builder.Services.TryAddScoped<UserActivityCaptureFilter>();

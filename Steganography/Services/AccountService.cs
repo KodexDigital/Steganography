@@ -4,10 +4,14 @@ using Anaconda.Models;
 using Anaconda.Requests;
 using Anaconda.Settings;
 using Anaconda.UserViewResponse;
+using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Steganography.ViewModels;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -15,13 +19,15 @@ using System.Text;
 namespace Steganography.Services
 {
     public class AccountService(ServiceDbContext dbContext, IEmailService emailService, UserManager<ApplicationUser> userManager, 
-        SignInManager<ApplicationUser> signInManager, IOptionsSnapshot<SystemSettings> settings) : IAccountService
+        SignInManager<ApplicationUser> signInManager, IOptionsSnapshot<SystemSettings> settings,
+        IRazorViewToStringRenderer renderer) : IAccountService
     {
         protected readonly ServiceDbContext dbContext = dbContext;
         protected readonly IEmailService emailService = emailService;
         protected readonly UserManager<ApplicationUser> userManager = userManager;
         protected readonly SignInManager<ApplicationUser> signInManager = signInManager;
         protected readonly SystemSettings settings = settings.Value;
+        protected readonly IRazorViewToStringRenderer renderer = renderer;
         public async Task<ResponseHandler> RegisterUserAsync(string email)
         {
             var response = new ResponseHandler();
@@ -164,19 +170,27 @@ namespace Steganography.Services
                     user.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!)/2);
                     await userManager.UpdateAsync(user);
 
-                    var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
+                    var model = new EmailViewModel
+                    {
+                        Subject = $"Access Token - {DateTime.Now:yyyyMdHHmssff}",
+                        Title = "Welcome to K-Steg!",
+                        BodyContent = "Please click on the link to login to Steg",
+                        ActionUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}",
+                        ActionText = "Login Now"
+                    };
                     var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
                     {
                         Recipients =
                         [
                             new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
                         ],
-                        Subject = "Access Token",
-                        Body = $"Hi Stegian! <p>Please click on the link to login to steg: <a href='{callBackUrl}'>Login Now ==></a></p>"
+                        Subject = model.Subject,
+                        Body = OnTheGoEmailTemplating(model)
+                        //Body = $"Hi Stegian! <p>Please click on the link to login to steg: <a href='{callBackUrl}'>Login Now ==></a></p>"
                     }, settings.DefaultEmailHeader!);
 
                     response.Status = sentMailResponse.Status;
-                    response.Message = sentMailResponse.Status ? "Login link sent successfully." : "Failed to send login link.";
+                    response.Message = sentMailResponse.Status ? "Login link sent successfully. Check your email (Inbox or Junk folder)." : "Failed to send login link.";
                 }
 
                 LogHelper.Log("Account Login", response.Message, response.Status ? "Success" : "Failed", user?.Id.ToString() ?? string.Empty);
@@ -273,15 +287,23 @@ namespace Steganography.Services
             regUser.VerificationTokenExpires = DateTime.Now.AddMinutes(double.Parse(settings.TokenExpiresInMinutes!));
             await userManager.UpdateAsync(regUser);
 
-            var callBackUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}";
+            var model = new EmailViewModel
+            {
+                Subject = $"Email Account Verification - {DateTime.Now:yyyyMdHHmssff}",
+                Title = "Welcome to K-Steg!",
+                BodyContent = "Click the button below to verify your account.",
+                ActionUrl = $"{settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}",
+                ActionText = "Verify Account"
+            };
             var sentMailResponse = await emailService.SendMailAsync(new DefaultSendMailRequest
             {
                 Recipients =
                 [
                     new() { EmailAddress = mail.Address, Name = mail.User.ToUpper() }
                 ],
-                Subject = "Account Verification",
-                Body = $"Hi Stegian! <p>Please verify your account by clicking the link: <a href='{callBackUrl}'>Verify Account</a></p>"
+                Subject = model.Subject,
+                Body = OnTheGoEmailTemplating(model)
+                //Body = $"<h5>Hi Stegian!</h5> Click the button below to verify your account. <br> {settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}"
             }, settings.DefaultEmailHeader!);
 
             if (sentMailResponse.Status)
@@ -300,6 +322,82 @@ namespace Steganography.Services
                 response.Message = "Failed to send verification email.";
                 response.Status = false;
             }
+        }
+        protected static string OnTheGoEmailTemplating(EmailViewModel model)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html lang=\"en\">");
+            sb.AppendLine("<head>");
+            sb.AppendLine("<meta charset=\"UTF-8\">");
+            sb.AppendLine("<meta charset=\"utf-8\" />");
+            sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
+            sb.AppendLine("<title>{{Subject}}</title>");
+            sb.AppendLine("<link rel=\"icon\" type=\"image/x-icon\" href=\"~/icons/stegtool.ico\" />");
+            sb.AppendLine("<link rel=\"apple-touch-icon\" href=\"~/icons/stegtool.jpg\">");
+            sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+            sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">");
+            sb.AppendLine("<meta name=\"description\" content=\"\">");
+            sb.AppendLine("<meta name=\"author\" content=\"\">");
+            sb.AppendLine("<link href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" />");
+            sb.AppendLine("</head>");
+            sb.AppendLine("<body style=\"margin:0; padding:0; font-family:'Segoe UI', sans-serif; background-color:#f4f4f4;\">");
+
+            sb.AppendLine("<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#f4f4f4; padding: 40px 0;\">");
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td align=\"center\">");
+
+            sb.AppendLine("<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);\">");
+
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td style=\"background-color:#0d6efd; padding: 20px; color:#ffffff; text-align:center;\">");
+            sb.AppendLine("<h2 style=\"margin:0;\">K-Steg</h2>");
+            sb.AppendLine("<p style=\"margin:0; font-size: 14px;\">Secure Image Messaging Tool</p>");
+            sb.AppendLine("</td>");
+            sb.AppendLine("</tr>");
+
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td style=\"padding: 30px;\">");
+            sb.AppendLine("<h3 style=\"margin-top:0;\">{{Title}}</h3>");
+            sb.AppendLine("<p style=\"font-size: 16px; line-height: 1.5; color:#333333; padding-top: 10px;\">");
+            sb.AppendLine("<h6>Hi {{RecipientName}},</h6>");
+            sb.AppendLine("<span class=\"ml-4\">{{BodyContent}}</span>");
+            sb.AppendLine("</p>");
+
+            sb.AppendLine("<div style=\"margin-top: 30px; text-align: center;\">");
+            sb.AppendLine("<a href=\"{{ActionLink}}\" target=\"_blank\" style=\"background-color:#0d6efd; color:#ffffff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;\">{{LinkText}}</a>");
+            sb.AppendLine("</div>");
+            sb.AppendLine("</td>");
+            sb.AppendLine("</tr>");
+
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td style=\"padding: 20px; text-align: center; font-size: 12px; color:#999999;\">");
+            sb.AppendLine("<hr>");
+            sb.AppendLine("Copyright &copy; {{Year}} | <a href=\"https://prismdigitalco.com/\" target=\"_blank\">Prism Digital Company</a>. All rights reserved.<br />");
+            sb.AppendLine("<a href=\"https://securesteg.app/home/privacy\" class=\"me-3\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Privacy Policy</a>");
+            sb.AppendLine("<a href=\"https://securesteg.app/home/terms\" class=\"me-3\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Terms of Service</a>");
+            sb.AppendLine("<a href=\"https://securesteg.app/home/cookies\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Cookie Policy</a>");
+            sb.AppendLine("</td>");
+            sb.AppendLine("</tr>");
+
+            sb.AppendLine("</table>");
+            sb.AppendLine("</td>");
+            sb.AppendLine("</tr>");
+            sb.AppendLine("</table>");
+            sb.AppendLine("</body>");
+            sb.AppendLine("</html>");
+
+            string emailHtml = sb.ToString();
+
+            emailHtml = emailHtml.Replace("{{Subject}}", model.Subject)
+                .Replace("{{Title}}", model.Title)
+                .Replace("{{RecipientName}}", "Stegian")
+                .Replace("{{BodyContent}}", model.BodyContent)
+                .Replace("{{ActionLink}}", model.ActionUrl)
+                .Replace("{{LinkText}}", model.ActionText)
+                .Replace("{{Year}}", DateTime.Now.Year.ToString());
+
+            return emailHtml;
         }
     }
 }

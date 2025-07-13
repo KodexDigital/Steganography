@@ -14,7 +14,7 @@ namespace Steganography.Controllers
         {
             var registrationResult = await accountService.RegisterUserAsync(model.Email!);
             if(registrationResult.Status)
-                TempData["SuccessMessage"] = "User registration successful. Please check your email to verify account and gain access";
+                TempData["SuccessMessage"] = "User registration successful. Please check your email (inbox/junk/spam folder) to verify account and gain access";
             else
                 TempData["ErrorMessage"] = registrationResult.Message;
 
