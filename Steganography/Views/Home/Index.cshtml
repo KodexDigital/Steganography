@@ -1,4 +1,5 @@
 ﻿@using Steganography.ViewModels
+@using Anaconda.Common
 @model AuthenticationViewModel
 
 
@@ -8,6 +9,11 @@
 }
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<style>
+    .select-hover:hover {
+        cursor:pointer
+    }
+</style>
 
 <div class="row">
     <!-- Area Chart -->
@@ -153,9 +159,15 @@
                 </div>
                 <div class="modal-body">
                     <input type="email" class="form-control" placeholder="Enter your steg email" asp-for="Email">
+                    <div class="form-check pt-1 small select-hover">
+                        <input type="checkbox" id="termsCheck" class="form-check-input select-hover">
+                        <label for="termsCheck" class="form-check-label select-hover">
+                            I agreed to the @Constants.APP_NAME <a asp-action="Terms" asp-controller="Home" target="_blank">Terms & Conditions</a>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                    <button type="submit" class="btn btn-primary btn-user btn-block" id="btnRegister">
                         Register
                     </button>
                     <a class="small" href="#" data-toggle="modal" data-target="#loginModal" id="btn-login">Already have an account? Login!</a>
@@ -164,7 +176,6 @@
         </div>
     </div>
 </form>
-
 
 
 <!-- Login Modal-->
@@ -181,7 +192,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="email" class="form-control" placeholder="Enter your steg email" asp-for="Email">
+                    <input type="email" class="form-control" placeholder="Enter your steg email" asp-for="Email">                  
                 </div>
                 <div class="modal-footer">
                     <button type="submit"  class="btn btn-primary btn-user btn-block">
@@ -208,6 +219,27 @@
 }
 
 <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const checkbox = document.getElementById('termsCheck');
+      const button = document.getElementById('btnRegister');
+
+      // Ensure button is disabled on load
+      button.disabled = true;
+
+      // Toggle enable state and button style
+      checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        button.disabled = false;
+        button.classList.remove('btn-outline-danger');
+        button.classList.add('btn-primary');
+      } else {
+        button.disabled = true;
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-outline-danger');
+      }
+      });
+    });
+
      $('#btn-reg').click(function()
      {
           $('#loginModal').modal('hide');

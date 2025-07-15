@@ -1,16 +1,14 @@
-﻿using Anaconda.DataLayer;
+﻿using Anaconda.Common;
+using Anaconda.DataLayer;
 using Anaconda.Helpers;
 using Anaconda.Models;
 using Anaconda.Requests;
 using Anaconda.Settings;
 using Anaconda.UserViewResponse;
-using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Steganography.ViewModels;
 using System.Net;
 using System.Net.Mail;
@@ -247,6 +245,28 @@ namespace Steganography.Services
             return response;
         }
 
+        public async Task<ResponseHandler> UserLoginAsync(LoginViewModel model)
+        {
+            var response = new ResponseHandler();
+            try
+            {
+                var user = await userManager.FindByEmailAsync(model.Username) ?? throw new Exception("Invalid user or user does not exist");
+                var loginResult = await signInManager.PasswordSignInAsync(user, model.Password, true, false);
+                if (loginResult.Succeeded) response.Message = "Login successful";
+                else
+                {
+                    response.Status = false;
+                    response.Message = "Login failed";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
         public async Task<ResponseHandler> LogoutAsync()
         {
             var response = new ResponseHandler();
@@ -351,17 +371,17 @@ namespace Steganography.Services
 
             sb.AppendLine("<tr>");
             sb.AppendLine("<td style=\"background-color:#0d6efd; padding: 20px; color:#ffffff; text-align:center;\">");
-            sb.AppendLine("<h2 style=\"margin:0;\">K-Steg</h2>");
+            sb.AppendLine($"<h2 style=\"margin:0;\">{Constants.APP_NAME}</h2>");
             sb.AppendLine("<p style=\"margin:0; font-size: 14px;\">Secure Image Messaging Tool</p>");
             sb.AppendLine("</td>");
             sb.AppendLine("</tr>");
 
             sb.AppendLine("<tr>");
             sb.AppendLine("<td style=\"padding: 30px;\">");
-            sb.AppendLine("<h3 style=\"margin-top:0;\">{{Title}}</h3>");
-            sb.AppendLine("<p style=\"font-size: 16px; line-height: 1.5; color:#333333; padding-top: 10px;\">");
-            sb.AppendLine("<h6>Hi {{RecipientName}},</h6>");
-            sb.AppendLine("<span class=\"ml-4\">{{BodyContent}}</span>");
+            sb.AppendLine("<h1 style=\"margin-top:0;\">{{Title}}</h2>");
+            sb.AppendLine("<p style=\"font-size: 20px; line-height: 1.5; color:#333333; padding-top: 10px;\">");
+            sb.AppendLine("<h2>Hi {{RecipientName}},</h3>");
+            sb.AppendLine("<span class=\"ml-4\" style=\"font-size: 24x;\">\">{{BodyContent}}</span>");
             sb.AppendLine("</p>");
 
             sb.AppendLine("<div style=\"margin-top: 30px; text-align: center;\">");
@@ -373,7 +393,7 @@ namespace Steganography.Services
             sb.AppendLine("<tr>");
             sb.AppendLine("<td style=\"padding: 20px; text-align: center; font-size: 12px; color:#999999;\">");
             sb.AppendLine("<hr>");
-            sb.AppendLine("Copyright &copy; {{Year}} | <a href=\"https://prismdigitalco.com/\" target=\"_blank\">Prism Digital Company</a>. All rights reserved.<br />");
+            sb.AppendLine("Copyright &copy; {{Year}} | <a href=\"#\" target=\"_blank\">Kodex Power Service</a>. All rights reserved.<br />");
             sb.AppendLine("<a href=\"https://securesteg.app/home/privacy\" class=\"me-3\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Privacy Policy</a>");
             sb.AppendLine("<a href=\"https://securesteg.app/home/terms\" class=\"me-3\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Terms of Service</a>");
             sb.AppendLine("<a href=\"https://securesteg.app/home/cookies\" target=\"_blank\" style=\"color:#999999; text-decoration:underline;\">Cookie Policy</a>");

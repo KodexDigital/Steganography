@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Anaconda.Common
+
+@{
     bool isAuthenticated = User.Identity!.IsAuthenticated;
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
@@ -9,7 +11,7 @@
     <meta charset="utf-8" />
     <meta name="theme-color" content="#0d6efd">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] | KIPS Steg Tool</title>
+    <title>@ViewData["Title"] | @Constants.APP_NAME</title>
     <link rel="icon" type="image/x-icon" href="~/icons/stegtool.ico" />
     <link rel="apple-touch-icon" href="~/icons/stegtool.jpg">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,9 +45,9 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-action="Index" asp-controller="Home">
                 <div class="sidebar-brand-icon">
-                    <img class="img-profile rounded-circle img-thumbnail" src="~/icons/stegtool.jpg" style="width:45px; height:45px" />
+                    <img class="img-profile rounded-circle img-thumbnail" src="~/imgs/stegtool.jpg" style="width:45px; height:45px" />
                 </div>
-                <div class="sidebar-brand-text mx-4">KIPS STEG</div>
+                <div class="sidebar-brand-text mx-1">@Constants.APP_NAME <sup>v1</sup></div>
             </a>
             @if (currentController!.ToLower() == "admin")
             {
@@ -119,7 +121,7 @@
                                 <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name!.ToUpper()</span>
-                                    <img class="img-profile rounded-circle" src="~/icons/stegtool.jpg" />
+                                    <img class="img-profile rounded-circle" src="~/imgs/stegtool.jpg" />
                                 </a>
                                 <!-- Dropdown - User Information -->
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -153,19 +155,8 @@
             </div>
             <!-- End of Main Content -->
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; <span id="year"></span> by <a href="https://prismdigitalco.com/" target="_blank">Prism Digital Company</a>. All rights reserved | Version 1.0</span>
-                        <hr />
-                        <a href="/Home/Privacy" class="me-3" target="_blank">Privacy Policy</a>
-                        <a href="/Home/Terms" class="me-3" target="_blank">Terms of Service</a>
-                        <a href="/Home/Cookies" target="_blank">Cookie Policy</a>
-                    </div>
-                </div>
-            </footer>
+            <partial name="Footer" src="~/Views/Shared/Footer.cshtml"/>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
     </div>

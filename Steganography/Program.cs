@@ -1,4 +1,5 @@
 using Anaconda.DataLayer;
+using Anaconda.DataLayer.Seeding;
 using Anaconda.Models;
 using Anaconda.Settings;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ServiceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(opt =>
+{
+    opt.Password.RequireDigit = true;
+    opt.Password.RequiredLength = 8;
+    opt.Password.RequireNonAlphanumeric = true;
+    opt.Password.RequireUppercase = true;
+    opt.Password.RequireLowercase = true;
+    opt.Password.RequiredUniqueChars = 1;
+}).AddRoles<ApplicationRole>().AddEntityFrameworkStores<ServiceDbContext>().AddDefaultTokenProviders();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -26,15 +36,7 @@ builder.Services.AddSession(options =>
     options.Cookie.Path = "/";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
-builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
-{
-    opt.Password.RequireDigit = true;
-    opt.Password.RequiredLength = 8;
-    opt.Password.RequireNonAlphanumeric = true;
-    opt.Password.RequireUppercase = true;
-    opt.Password.RequireLowercase = true;
-    opt.Password.RequiredUniqueChars = 1;
-}).AddEntityFrameworkStores<ServiceDbContext>().AddDefaultTokenProviders();
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
@@ -84,8 +86,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapStaticAssets();
 
 app.MapControllerRoute(
@@ -93,5 +95,11 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// data seeding
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await IdentitySeeder.SeedAdminUserAsync(services);
+}
 
 app.Run();

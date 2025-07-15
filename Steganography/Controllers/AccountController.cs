@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Steganography.Services;
 using Steganography.ViewModels;
-using System.Threading.Tasks;
 
 namespace Steganography.Controllers
 {
+    [AllowAnonymous]
     public class AccountController(IAccountService accountService) : UserBaseController
     {
         protected readonly IAccountService accountService = accountService;

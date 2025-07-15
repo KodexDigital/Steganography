@@ -7,6 +7,8 @@ namespace Anaconda.DataLayer
 {
     public class ServiceDbContext(DbContextOptions<ServiceDbContext> options) : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
     {
+        public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<ApplicationRole> Roles { get; set; }
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<VisitationInfo> VisitationInfos { get; set; }
         public DbSet<UserStat> UserStats { get; set; }
