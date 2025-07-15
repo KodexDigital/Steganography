@@ -5,9 +5,9 @@ using Anaconda.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Steganography.Extensions;
 using Steganography.FilterAttributes;
 using Steganography.Services;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,15 +63,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<ISteganographyService, SteganographyService>();
-builder.Services.AddTransient<IActivityLoggerService, ActivityLoggerService>();
-builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.AddTransient<IAccountService, AccountService>();
-builder.Services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
-
-builder.Services.Configure<SystemSettings>(builder.Configuration.GetSection(nameof(SystemSettings)));
-builder.Services.TryAddScoped<UserActivityCaptureFilter>();
+ServiceInjectionExtensions.RegisterService(builder);
 
 var app = builder.Build();
 

@@ -8,10 +8,12 @@ namespace Anaconda.Models
         public bool IsLocked { get; set; } = false;
         public string? VerificationToken { get; set; }
         public DateTime? VerificationTokenExpires { get; set; }
+        public DateTime CreatedAt { get; set; }
         public virtual ICollection<UserStat> UserStats { get; set; }
         public ApplicationUser()
         {
             UserStats = [];
+            CreatedAt = DateTime.Now;
         }
     }
 }

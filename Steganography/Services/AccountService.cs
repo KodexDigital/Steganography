@@ -96,6 +96,7 @@ namespace Steganography.Services
                 {
                     user.VerificationToken = null;
                     user.VerificationTokenExpires = null;
+                    user.EmailConfirmed = true;
                     await userManager.UpdateAsync(user);
 
                     await signInManager.SignInAsync(user, isPersistent: true);

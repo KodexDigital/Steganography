@@ -3,20 +3,33 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Steganography.Services;
 using Steganography.ViewModels;
+using System.Threading.Tasks;
 
 namespace Steganography.Controllers
 {
     //[Authorize(Roles = "Admin")]
-    public class AdminController(IActivityLoggerService activityLoggerService, IAccountService accountService) : Controller
+
+    public class AdminController(IActivityLoggerService activityLoggerService, IAccountService accountService, IAdminViewService adminViewService) : Controller
     {
         protected readonly IActivityLoggerService _activityLoggerService = activityLoggerService;
         protected readonly IAccountService accountService = accountService;
-        public IActionResult Index() => View();
-        
+        protected readonly IAdminViewService adminViewService = adminViewService;
+
+        public async Task<IActionResult> Index()
+        {
+            var dashboardData = new AdminViewModel();
+            var data = await adminViewService.DashboardDataAsync();
+            var users = await adminViewService.DashboardUsersAsync();
+
+            dashboardData.Users = users.Data;
+            dashboardData.DashboardData = data.Data;
+
+            return View(dashboardData);
+        }
+
         [AllowAnonymous]
         public IActionResult Login() => View();
         
-        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)

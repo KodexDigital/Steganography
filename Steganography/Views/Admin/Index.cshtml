@@ -1,8 +1,139 @@
-﻿
+﻿@using Steganography.ViewModels
+@model AdminViewModel
+
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Admin Index</h1>
-Authentication required
+<div class="d-sm-flex mb-4">
+    <h1 class="h4 mb-0 text-gray-800">Admin Dashboard</h1>
+</div>
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 bg-gradient-primary">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                            Visitors
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-white">@Model.DashboardData!.TotalVisitors</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-street-view fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 bg-gradient-success">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                            Activity Logs
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-white">@Model.DashboardData!.TotalLogs</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-history fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 bg-gradient-info">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-white text-uppercase mb-1">
+                            Users
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-white">@Model.DashboardData!.TotalUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Users</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                 aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">Dropdown Header:</div>
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+        </div>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0" style="font-size:12px">
+                <thead>
+                    <tr>
+                        <th>Sn</th>
+                        <th>Username</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Account Confirmed</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sn = 1;
+                    }
+                    @foreach (var item in Model.Users!)
+                    {
+                        <tr>
+                            <td>@sn</td>
+                            <td>@item.Username!.ToUpper()</td>
+                            <td>@item.PhoneNumber</td>
+                            <td>@item.Email</td>
+                            <td>
+                                @if (item.EmailConfirmed)
+                                {
+                                    <span class="btn btn-success btn-sm btn-block">
+                                        <i class="fas fa-check"></i>
+                                        <span class="text">Confirmed</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="btn btn-danger btn-sm btn-block">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span class="text">Not Confirmed</span>
+                                    </span>
+                                }
+                            </td>
+                            <td>@item.CreatedAt.ToString("f")</td>
+                        </tr>
+                        sn++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
