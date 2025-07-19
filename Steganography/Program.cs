@@ -1,13 +1,9 @@
 using Anaconda.DataLayer;
 using Anaconda.DataLayer.Seeding;
 using Anaconda.Models;
-using Anaconda.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Steganography.Extensions;
-using Steganography.FilterAttributes;
-using Steganography.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
