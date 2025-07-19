@@ -12,6 +12,7 @@ namespace Steganography.Controllers
         protected readonly IActivityLoggerService _activityLoggerService = activityLoggerService;
         protected readonly IAccountService accountService = accountService;
         protected readonly IAdminViewService adminViewService = adminViewService;
+
         public async Task<IActionResult> Index()
         {
             var dashboardData = new AdminViewModel();
@@ -30,8 +31,10 @@ namespace Steganography.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Login() => View();
-        
+
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)

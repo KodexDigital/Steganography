@@ -48,7 +48,7 @@ namespace Steganography.Controllers
             return RedirectToAction("StegIn", "Stego");
         }
 
-        [HttpGet]
+        [Route("access-denied")]
         public IActionResult AccessDenied() => View();
 
         [HttpPost("logout")]
