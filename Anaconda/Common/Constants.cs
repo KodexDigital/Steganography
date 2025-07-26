@@ -2,6 +2,6 @@
 {
     public class Constants
     {
-        public static string APP_NAME => "SecureSteg";
+        public static string APP_NAME => "Stegi";
     }
 }
