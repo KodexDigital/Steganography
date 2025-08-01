@@ -1,4 +1,4 @@
-using Anaconda.DataLayer;
+﻿using Anaconda.DataLayer;
 using Anaconda.DataLayer.Seeding;
 using Anaconda.Models;
 using Microsoft.AspNetCore.Identity;
@@ -95,6 +95,18 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await IdentitySeeder.SeedAdminUserAsync(services);
+
+    // run pending migrations
+    try
+    {
+        var db = services.GetRequiredService<ServiceDbContext>();
+        db.Database.Migrate(); 
+        Console.WriteLine("Database migration completed.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Migration failed: {ex.Message}");
+    }
 }
 
 app.Run();
