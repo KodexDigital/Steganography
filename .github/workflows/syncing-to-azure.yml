@@ -20,7 +20,7 @@ jobs:
 
       - name: Push to Azure DevOps
         env:
-          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_PAT }}
+          AZURE_PAT: ${{ secrets.AZURE_PAT }}
         run: |
           git remote add azure https://prismdigital:${AZURE_PAT}@dev.azure.com/prismdigital/Steganography/_git/Steganography
           git push azure dev
