@@ -90,15 +90,16 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-// data seeding
+
 using (var scope = app.Services.CreateScope())
 {
+    // data seeding
     var services = scope.ServiceProvider;
     await IdentitySeeder.SeedAdminUserAsync(services);
-
-    // run pending migrations
+    
     try
     {
+        // run pending migrations
         var db = services.GetRequiredService<ServiceDbContext>();
         db.Database.Migrate(); 
         Console.WriteLine("Database migration completed.");
