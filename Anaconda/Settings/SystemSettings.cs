@@ -10,5 +10,13 @@
         public string? DefaultAdmin { get; set; }
         public string? DefaultAdminPassword { get; set; }
         public string? DefaultAdminRole { get; set; }
+        public ZohoMailSettings? ZohoMailSettings { get; set; }
+    }
+
+    public class ZohoMailSettings
+    {
+        public string BaseUrl { get; set; } = string.Empty;
+        public string Sender { get; set; } = string.Empty;
+        public string SenderName { get; set; } = string.Empty;
     }
 }

@@ -5,6 +5,6 @@ namespace Steganography.Services
 {
     public interface IEmailService
     {
-        Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request, string authHeader);
+        Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request);
     }
 }

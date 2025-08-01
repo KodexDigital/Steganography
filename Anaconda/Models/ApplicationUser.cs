@@ -4,6 +4,7 @@ namespace Anaconda.Models
 {
     public class ApplicationUser : IdentityUser<Guid>
     {
+        public override Guid Id { get; set; }
         public DateTime? VerificationSentAt { get; set; }
         public bool IsLocked { get; set; } = false;
         public string? VerificationToken { get; set; }
