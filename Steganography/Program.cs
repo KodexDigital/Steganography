@@ -1,4 +1,5 @@
-﻿using Anaconda.DataLayer;
+﻿using Anaconda.Common;
+using Anaconda.DataLayer;
 using Anaconda.DataLayer.Seeding;
 using Anaconda.Models;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<ServiceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ServiceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(SettingProps.DEFAULT_CONNECTION_STRING)));
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(opt =>
 {
     opt.Password.RequireDigit = true;
@@ -64,17 +65,17 @@ ServiceInjectionExtensions.RegisterService(builder);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseDeveloperExceptionPage();
-//}
-//else
-//{
-//    app.UseExceptionHandler("/Home/Error");
-//    app.UseHsts();
-//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//}
+//Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+}
 
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -83,7 +84,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapStaticAssets();
 
-//app.UseStatusCodePagesWithReExecute("/Home/Error");
+app.UseStatusCodePagesWithReExecute("/Home/Error");
 
 app.MapControllerRoute(
     name: "default",
