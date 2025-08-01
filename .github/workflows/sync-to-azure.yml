@@ -22,4 +22,4 @@ jobs:
     - name: Add Azure DevOps remote and push
       run: |
         git remote add azure https://${{ secrets.AZURE_USERNAME }}:${{ secrets.AZURE_PAT }}@dev.azure.com/prismdigital/Steganography/_git/Steganography
-        git push azure dev
+        git push azure master
