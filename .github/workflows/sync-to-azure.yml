@@ -14,6 +14,13 @@ jobs:
     - name: Checkout GitHub repo
       uses: actions/checkout@v3
 
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_87B7B9EC6375496AB7D27876D4D83B4B }}
+        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B9CEF5339515499C978BB895BECA6BB0 }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_26610A1EC307452A8F84CDE8AB032D8E }}
+          
     - name: Set up Git
       run: |
         git config --global user.name "GitHub Sync Bot"
