@@ -1,4 +1,4 @@
-using Anaconda.DataLayer;
+﻿using Anaconda.DataLayer;
 using Anaconda.DataLayer.Seeding;
 using Anaconda.Models;
 using Microsoft.AspNetCore.Identity;
@@ -90,11 +90,24 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-// data seeding
+
 using (var scope = app.Services.CreateScope())
 {
+    // data seeding
     var services = scope.ServiceProvider;
     await IdentitySeeder.SeedAdminUserAsync(services);
+    
+    try
+    {
+        // run pending migrations
+        var db = services.GetRequiredService<ServiceDbContext>();
+        db.Database.Migrate(); 
+        Console.WriteLine("Database migration completed.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Migration failed: {ex.Message}");
+    }
 }
 
 app.Run();
