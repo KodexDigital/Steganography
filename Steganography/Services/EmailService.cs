@@ -1,4 +1,5 @@
-﻿using Anaconda.Enums;
+﻿using Anaconda.Common;
+using Anaconda.Enums;
 using Anaconda.Helpers;
 using Anaconda.Requests;
 using Anaconda.Response;
@@ -7,21 +8,21 @@ using Newtonsoft.Json;
 
 namespace Steganography.Services
 {
-    public class EmailService : IEmailService
+    public class EmailService(IConfiguration configuration) : IEmailService
     {
-        public async Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request, string authHeaderKey)
+        private readonly IConfiguration _configuration = configuration;
+        public async Task<ResponseHandler> SendMailAsync(DefaultSendMailRequest request)
         {
             var response = new ResponseHandler();
             var responseData = new ZohoSendMailResponse();
             try
             {
-                string requestUrl = "/v1.1/email";
                 var req = new ZohoSendMailRequest
                 {
                     from = new From
                     {
-                        address = "support@kodextechnology.com",
-                        name = "KIPS Steg Tool",
+                        address = _configuration[SettingProps.DEFAULT_EMAIL_SERVICE_SENDER]!,
+                        name = _configuration[SettingProps.DEFAULT_EMAIL_SERVICE_SENDER_NAME]!,
                     },
                     to = request.Recipients?.Select(r => new Anaconda.Requests.To
                     {
@@ -37,10 +38,10 @@ namespace Steganography.Services
 
                 var headerAuth = new Dictionary<string, string>
                 {
-                    {"Authorization", authHeaderKey}
+                    {Constants.AUTHORIZATION, _configuration[SettingProps.DEFAULT_EMAIL_SERVICE_KEY]!}
                 };
 
-                var httpResponse = await HttpHelper.SendRequest(req, "https://api.zeptomail.com", requestUrl, HttpMethod.Post, headerAuth, ApiRequestContentType.application_json);
+                var httpResponse = await HttpHelper.SendRequest(req, _configuration[SettingProps.DEFAULT_EMAIL_SERVICE_PATH]!, SettingProps.DEFAULT_EMAIL_SERVICE_CALL_URL, HttpMethod.Post, headerAuth, ApiRequestContentType.application_json);
                 if (httpResponse is not null && httpResponse.IsSuccessStatusCode)
                 {
                     responseData = JsonConvert.DeserializeObject<ZohoSendMailResponse>(await httpResponse.Content.ReadAsStringAsync());

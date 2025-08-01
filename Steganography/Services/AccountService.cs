@@ -186,7 +186,7 @@ namespace Steganography.Services
                         Subject = model.Subject,
                         Body = OnTheGoEmailTemplating(model)
                         //Body = $"Hi Stegian! <p>Please click on the link to login to steg: <a href='{callBackUrl}'>Login Now ==></a></p>"
-                    }, settings.DefaultEmailHeader!);
+                    });
 
                     response.Status = sentMailResponse.Status;
                     response.Message = sentMailResponse.Status ? "Login link sent successfully. Check your email (Inbox or Junk folder)." : "Failed to send login link.";
@@ -325,7 +325,7 @@ namespace Steganography.Services
                 Subject = model.Subject,
                 Body = OnTheGoEmailTemplating(model)
                 //Body = $"<h5>Hi Stegian!</h5> Click the button below to verify your account. <br> {settings.AccountVerificationPath}{WebUtility.HtmlEncode(token)}"
-            }, settings.DefaultEmailHeader!);
+            });
 
             if (sentMailResponse.Status)
             {
