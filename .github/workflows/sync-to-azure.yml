@@ -1,1 +1,25 @@
 
+name: Sync to Azure DevOps
+
+on:
+  push:
+    branches:
+      - master  # change to your desired branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout GitHub repo
+      uses: actions/checkout@v3
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "GitHub Sync Bot"
+        git config --global user.email "sync-bot@example.com"
+
+    - name: Add Azure DevOps remote and push
+      run: |
+        git remote add azure https://${{ secrets.AZURE_USERNAME }}:${{ secrets.AZURE_PAT }}@dev.azure.com/prismdigital/Steganography/_git/Steganography
+        git push azure dev
