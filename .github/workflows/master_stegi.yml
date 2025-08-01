@@ -62,4 +62,3 @@ jobs:
           app-name: 'stegi'
           slot-name: 'Production'
           package: .
-          
